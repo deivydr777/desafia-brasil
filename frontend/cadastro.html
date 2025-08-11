@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Desafia Brasil</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar Simples -->
+    <nav class="navbar navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>Desafia Brasil
+            </a>
+            <div>
+                <a href="index.html" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Voltar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Cadastro Card -->
+                <div class="card shadow border-0 rounded-3">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <div class="auth-icon bg-success text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h2 class="fw-bold">Criar Conta</h2>
+                            <p class="text-muted">Junte-se a milhares de estudantes</p>
+                        </div>
+
+                        <!-- Progress Indicator -->
+                        <div class="progress mb-4" style="height: 4px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="progressBar"></div>
+                        </div>
+
+                        <!-- Alerts -->
+                        <div id="alertContainer"></div>
+
+                        <!-- Cadastro Form -->
+                        <form id="registerForm" novalidate>
+                            <!-- Etapa 1: Dados Básicos -->
+                            <div class="form-step" id="step1">
+                                <h5 class="fw-bold mb-3">
+                                    <span class="badge bg-primary me-2">1</span>
+                                    Dados Básicos
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label">Nome Completo</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="fullName" 
+                                               placeholder="Seu nome completo" required>
+                                        <div class="invalid-feedback">
+                                            Por favor, insira seu nome completo.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="email" 
+                                               placeholder="seu@email.com" required>
+                                        <div class="invalid-feedback">
+                                            Por favor, insira um e-mail válido.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Senha</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="password" 
+                                               placeholder="Mínimo 6 caracteres" required minlength="6">
+                                        <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <div class="invalid-feedback">
+                                            A senha deve ter pelo menos 6 caracteres.
+                                        </div>
+                                    </div>
+                                    <!-- Password Strength Indicator -->
+                                    <div class="password-strength mt-2">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" id="passwordStrength" style="width: 0%"></div>
+                                        </div>
+                                        <small class="text-muted" id="strengthText">Digite uma senha</small>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="confirmPassword" class="form-label">Confirmar Senha</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="confirmPassword" 
+                                               placeholder="Digite a senha novamente" required>
+                                        <div class="invalid-feedback">
+                                            As senhas não coincidem.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-primary w-100" id="nextStep1">
+                                    Próximo <i class="fas fa-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+
+                            <!-- Etapa 2: Informações Acadêmicas -->
+                            <div class="form-step d-none" id="step2">
+                                <h5 class="fw-bold mb-3">
+                                    <span class="badge bg-primary me-2">2</span>
+                                    Informações Acadêmicas
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="schoolYear" class="form-label">Ano Escolar</label>
+                                    <select class="form-select" id="schoolYear" required>
+                                        <option value="">Selecione seu ano</option>
+                                        <option value="1ano">1º Ano do Ensino Médio</option>
+                                        <option value="2ano">2º Ano do Ensino Médio</option>
+                                        <option value="3ano">3º Ano do Ensino Médio</option>
+                                        <option value="cursinho">Cursinho</option>
+                                        <option value="formado">Já me formei</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecione seu ano escolar.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="school" class="form-label">Escola (Opcional)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-school"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="school" 
+                                               placeholder="Nome da sua escola">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="targetExam" class="form-label">Principal Vestibular</label>
+                                    <select class="form-select" id="targetExam" required>
+                                        <option value="">Qual vestibular você pretende fazer?</option>
+                                        <option value="enem">ENEM</option>
+                                        <option value="fuvest">FUVEST (USP)</option>
+                                        <option value="unicamp">UNICAMP</option>
+                                        <option value="unesp">UNESP</option>
+                                        <option value="uerj">UERJ</option>
+                                        <option value="puc">PUC</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecione seu vestibular alvo.
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-secondary w-100" id="backStep1">
+                                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-primary w-100" id="nextStep2">
+                                            Próximo <i class="fas fa-arrow-right ms-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Etapa 3: Localização -->
+                            <div class="form-step d-none" id="step3">
+                                <h5 class="fw-bold mb-3">
+                                    <span class="badge bg-primary me-2">3</span>
+                                    Localização
+                                </h5>
+
+                                <div class="mb-3">
+                                    <label for="state" class="form-label">Estado</label>
+                                    <select class="form-select" id="state" required>
+                                        <option value="">Selecione seu estado</option>
+                                        <option value="AC">Acre</option>
+                                        <option value="AL">Alagoas</option>
+                                        <option value="AP">Amapá</option>
+                                        <option value="AM">Amazonas</option>
+                                        <option value="BA">Bahia</option>
+                                        <option value="CE">Ceará</option>
+                                        <option value="DF">Distrito Federal</option>
+                                        <option value="ES">Espírito Santo</option>
+                                        <option value="GO">Goiás</option>
+                                        <option value="MA">Maranhão</option>
+                                        <option value="MT">Mato Grosso</option>
+                                        <option value="MS">Mato Grosso do Sul</option>
+                                        <option value="MG">Minas Gerais</option>
+                                        <option value="PA">Pará</option>
+                                        <option value="PB">Paraíba</option>
+                                        <option value="PR">Paraná</option>
+                                        <option value="PE">Pernambuco</option>
+                                        <option value="PI">Piauí</option>
+                                        <option value="RJ">Rio de Janeiro</option>
+                                        <option value="RN">Rio Grande do Norte</option>
+                                        <option value="RS">Rio Grande do Sul</option>
+                                        <option value="RO">Rondônia</option>
+                                        <option value="RR">Roraima</option>
+                                        <option value="SC">Santa Catarina</option>
+                                        <option value="SP">São Paulo</option>
+                                        <option value="SE">Sergipe</option>
+                                        <option value="TO">Tocantins</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecione seu estado.
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="city" class="form-label">Cidade</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="city" 
+                                               placeholder="Digite sua cidade" required>
+                                        <div class="invalid-feedback">
+                                            Por favor, digite sua cidade.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Terms and Privacy -->
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                        <label class="form-check-label small" for="agreeTerms">
+                                            Concordo com os 
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Termos de Uso</a> 
+                                            e 
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Política de Privacidade</a>
+                                        </label>
+                                        <div class="invalid-feedback">
+                                            Você deve concordar com os termos para continuar.
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="agreeEmails">
+                                        <label class="form-check-label small" for="agreeEmails">
+                                            Quero receber dicas de estudo e novidades por e-mail
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-secondary w-100" id="backStep2">
+                                            <i class="fas fa-arrow-left me-2"></i>Voltar
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="submit" class="btn btn-success w-100" id="registerBtn">
+                                            <span class="spinner-border spinner-border-sm d-none me-2" id="registerSpinner"></span>
+                                            <i class="fas fa-check me-2"></i>Criar Conta
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Login Link -->
+                        <div class="text-center mt-4 pt-3 border-top">
+                            <p class="text-muted mb-2">Já tem uma conta?</p>
+                            <a href="login.html" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Fazer login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Termos de Uso -->
+    <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Termos de Uso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>1. Aceitação dos Termos</h6>
+                    <p>Ao utilizar o Desafia Brasil, você concorda com estes termos de uso.</p>
+                    
+                    <h6>2. Uso da Plataforma</h6>
+                    <p>A plataforma é gratuita para uso educacional. É proibido o uso comercial sem autorização.</p>
+                    
+                    <h6>3. Responsabilidades do Usuário</h6>
+                    <p>Você é responsável pela veracidade das informações fornecidas e pelo uso adequado da plataforma.</p>
+                    
+                    <h6>4. Propriedade Intelectual</h6>
+                    <p>Todo o conteúdo da plataforma é protegido por direitos autorais.</p>
+                    
+                    <h6>5. Modificações</h6>
+                    <p>Reservamos o direito de modificar estes termos a qualquer momento.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
+                </div>
+            </div>
+        </div>
+    </di
