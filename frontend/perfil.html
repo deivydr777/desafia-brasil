@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Desafia Brasil</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="dashboard.html">
+                <i class="fas fa-graduation-cap me-2"></i>Desafia Brasil
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="simulado.html">
+                            <i class="fas fa-brain me-1"></i>Simulados
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ranking.html">
+                            <i class="fas fa-trophy me-1"></i>Ranking
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar bg-primary text-white rounded-circle me-2" id="userAvatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span id="userName">Usuário</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item active" href="perfil.html">
+                                <i class="fas fa-user me-2"></i>Perfil
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <!-- Profile Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="profile-header card border-0 shadow bg-gradient-primary text-white">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                <div class="profile-avatar bg-warning text-dark rounded-circle mx-auto mb-3" id="profileAvatar">
+                                    JS
+                                </div>
+                                <button class="btn btn-outline-light btn-sm" onclick="changeProfilePhoto()">
+                                    <i class="fas fa-camera me-2"></i>Alterar Foto
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <h2 class="fw-bold mb-2" id="profileName">João Silva</h2>
+                                <p class="mb-1 opacity-75" id="profileLocation">São Paulo, SP</p>
+                                <p class="mb-3 opacity-75" id="profileSchool">Escola Estadual João Silva</p>
+                                <div class="profile-badges">
+                                    <span class="badge bg-warning text-dark me-2">
+                                        <i class="fas fa-medal me-1"></i>Estudante Dedicado
+                                    </span>
+                                    <span class="badge bg-success me-2">
+                                        <i class="fas fa-fire me-1"></i>15 dias seguidos
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="profile-stats">
+                                    <div class="stat-item mb-2">
+                                        <div class="h4 fw-bold" id="profileRanking">#142</div>
+                                        <small class="opacity-75">Posição Nacional</small>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="h4 fw-bold" id="profilePoints">1,245</div>
+                                        <small class="opacity-75">Pontos Totais</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tabs -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white">
+                        <ul class="nav nav-tabs card-header-tabs" id="profileTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview">
+                                    <i class="fas fa-chart-pie me-2"></i>Visão Geral
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history">
+                                    <i class="fas fa-history me-2"></i>Histórico
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="achievements-tab" data-bs-toggle="tab" data-bs-target="#achievements">
+                                    <i class="fas fa-trophy me-2"></i>Conquistas
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings">
+                                    <i class="fas fa-cog me-2"></i>Configurações
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="profileTabsContent">
+                            <!-- Overview Tab -->
+                            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                                <!-- Stats Overview -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-3 col-6">
+                                        <div class="stat-card text-center p-3 border rounded">
+                                            <div class="stat-icon text-primary mb-2">
+                                                <i class="fas fa-brain"></i>
+                                            </div>
+                                            <div class="stat-number fw-bold" id="totalSimulados">23</div>
+                                            <small class="text-muted">Simulados</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="stat-card text-center p-3 border rounded">
+                                            <div class="stat-icon text-success mb-2">
+                                                <i class="fas fa-percentage"></i>
+                                            </div>
+                                            <div class="stat-number fw-bold" id="averageScore">78.5%</div>
+                                            <small class="text-muted">Média Geral</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="stat-card text-center p-3 border rounded">
+                                            <div class="stat-icon text-warning mb-2">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div class="stat-number fw-bold" id="studyTime">47h</div>
+                                            <small class="text-muted">Tempo de Estudo</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <div class="stat-card text-center p-3 border rounded">
+                                            <div class="stat-icon text-info mb-2">
+                                                <i class="fas fa-fire"></i>
+                                            </div>
+                                            <div class="stat-number fw-bold" id="currentStreak">15</div>
+                                            <small class="text-muted">Dias Seguidos</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Performance Chart -->
+                                <div class="row mb-4">
+                                    <div class="col-lg-8">
+                                        <div class="chart-container">
+                                            <h6 class="fw-bold mb-3">Evolução de Desempenho</h6>
+                                            <canvas id="performanceChart" height="100"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="subject-performance">
+                                            <h6 class="fw-bold mb-3">Desempenho por Matéria</h6>
+                                            <canvas id="subjectChart" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recent Activity -->
+                                <div class="recent-activity">
+                                    <h6 class="fw-bold mb-3">Atividade Recente</h6>
+                                    <div id="recentActivityList">
+                                        <!-- Activities will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- History Tab -->
+                            <div class="tab-pane fade" id="history" role="tabpanel">
+                                <!-- Filter Options -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <select class="form-select" id="historyFilter">
+                                            <option value="all">Todos os Simulados</option>
+                                            <option value="matematica">Matemática</option>
+                                            <option value="portugues">Português</option>
+                                            <option value="historia">História</option>
+                                            <option value="geografia">Geografia</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-select" id="periodFilter">
+                                            <option value="all">Todos os Períodos</option>
+                                            <option value="week">Última Semana</option>
+                                            <option value="month">Último Mês</option>
+                                            <option value="year">Último Ano</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-primary" onclick="exportHistory()">
+                                            <i class="fas fa-download me-2"></i>Exportar
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- History Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Simulado</th>
+                                                <th>Matéria</th>
+                                                <th class="text-center">Questões</th>
+                                                <th class="text-center">Acertos</th>
+                                                <th class="text-center">Nota</th>
+                                                <th class="text-center">Tempo</th>
+                                                <th class="text-center">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historyTableBody">
+                                            <!-- History data will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Achievements Tab -->
+                            <div class="tab-pane fade" id="achievements" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-12 mb-4">
+                                        <h6 class="fw-bold">Suas Conquistas</h6>
+                                        <p class="text-muted">Continue estudando para desbloquear mais conquistas!</p>
+                                    </div>
+                                </div>
+
+                                <div class="achievements-grid row g-3">
+                                    <!-- Earned Achievements -->
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="achievement-card earned border rounded p-3">
+                                            <div class="achievement-icon text-warning mb-2">
+                                                <i class="fas fa-medal fa-2x"></i>
+                                            </div>
+                                            <h6 class="fw-bold">Primeiro Simulado</h6>
+                                            <p class="text-muted small mb-2">Complete seu primeiro simulado</p>
+                                            <div class="badge bg-success">Conquistado</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="achievement-card earned border rounded p-3">
+                                            <div class="achievement-icon text-warning mb-2">
+                                                <i class="fas fa-fire fa-2x"></i>
+                                            </div>
+                                            <h6 class="fw-bold">Em Chamas</h6>
+                                            <p class="text-muted small mb-2">Estude por 7 dias seguidos</p>
+                                            <div class="badge bg-success">Conquistado</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="achievement-card earned border rounded p-3">
+                                            <div class="achievement-icon text-warning mb-2">
+                                                <i class="fas fa-star fa-2x"></i>
+                                            </div>
+                                            <h6 class="fw-bold">Nota Alta</h6>
+                                            <p class="text-muted small mb-2">Tire uma nota acima de 90%</p>
+                                            <div class="badge bg-success">Conquistado</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Locked Achievements -->
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="achievement-card locked border rounded p-3 opacity-50">
+                                            <div class="achievement-icon text-muted mb-2">
+                                                <i class="fas fa-trophy fa-2x"></i>
+                                            </div>
+                                            <h6 class="fw-bold text-muted">Campeão</h6>
+                                            <p class="text-muted small mb-2">Fique entre os top 10 do ranking</p>
+                                            <div class="badge bg-secondary">Bloqueado</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="achievement-card locked border rounded p-3 opacity-50">
+                                            <div class="achievement-icon text-muted mb-2">
+                                                <i class="fas fa-brain fa-2x"></i>
+                                            </div>
+                                            <h6 class="fw-bold text-muted">Maratonista</h6>
+                                            <p class="text-muted small mb-2">Complete 50 simulados</p>
+                                            <div class="badge bg-secondary">23/50</div>
+                    </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="achievement-card locked border rounded p-3 opacity-50">
+                                            <div class="achievement-icon text-muted mb-2">
+                                                <i class="fas fa-crown fa-2x"></i>
+                                            </div>
+                                            <h6 class="fw-bold text-muted">Rei dos Estudos</h6>
+                                            <p class="text-muted small mb-2">Estude por 30 dias seguidos</p>
+                                            <div class="badge bg-secondary">15/30</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Settings Tab -->
+                            <div class="tab-pane fade" id="settings" role="tabpanel">
+                                <!-- Personal Information -->
+                                <div class="settings-section mb-4">
+                                    <h6 class="fw-bold mb-3">Informações Pessoais</h6>
+                                    <form id="personalInfoForm">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Nome Completo</label>
+                                                <input type="text" class="form-control" id="editName" value="João Silva">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">E-mail</label>
+                                                <input type="email" class="form-control" id="editEmail" value="joao@email.com">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Escola</label>
+                                                <input type="text" class="form-control" id="editSchool" value="Escola Estadual João Silva">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Ano Escolar</label>
+                                                <select class="form-select" id="editSchoolYear">
+                                                    <option value="3ano" selected>3º Ano do Ensino Médio</option>
+                                                    <option value="2ano">2º Ano do Ensino Médio</option>
+                                                    <option value="1ano">1º Ano do Ensino Médio</option>
+                                                    <option value="cursinho">Cursinho</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Estado</label>
+                                                <select class="form-select" id="editState">
+                                                    <option value="SP" selected>São Paulo</option>
+                                                    <option value="RJ">Rio de Janeiro</option>
+                                                    <option value="MG">Minas Gerais</option>
+                                                    <!-- Outros estados -->
+                           </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Cidade</label>
+                                                <input type="text" class="form-control" id="editCity" value="São Paulo">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-2"></i>Salvar Alterações
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                         !-- Study Preferences -->
+                                <div class="settings-section mb-4">
+                                    <h6 class="fw-bold mb-3">Preferências de Estudo</h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Vestibular Alvo</label>
+                                            <select class="form-select" id="targetExam">
+                                                <option value="enem" selected>ENEM</option>
+                                                <option value="fuvest">FUVEST</option>
+                                                <option value="unicamp">UNICAMP</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Dificuldade Preferida</label>
+                                            <select class="form-select" id="preferredDifficulty">
+                                                <option value="medio" selected>Médio</option>
+                                                <option value="facil">Fácil</option>
+                                                <option value="dificil">Difícil</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Notifications -->
+                                <div class="settings-section mb-4">
+                                    <h6 class="fw-bold mb-3">Notificações</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                        <label class="form-check-label" for="emailNotifications">
+                                            Receber notificações por e-mail
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="studyReminders" checked>
+                                        <label class="form-check-label" for="studyReminders">
+                                            Lembretes diários de estudo
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="rankingUpdates">
+                                        <label class="form-check-label" for="rankingUpdates">
+                                            Atualizações do ranking
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Privacy -->
+                                <div class="settings-section mb-4">
+                                    <h6 class="fw-bold mb-3">Privacidade</h6>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="publicProfile" checked>
+                                        <label class="form-check-label" for="publicProfile">
+                                            Perfil público no ranking
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="shareLocation" checked>
+                                        <label class="form-check-label" for="shareLocation">
+                                            Compartilhar localização
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Account Actions -->
+                                <div class="settings-section">
+                                    <h6 class="fw-bold mb-3 text-danger">Zona de Perigo</h6>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-warning" onclick="changePassword()">
+                                            <i class="fas fa-key me-2"></i>Alterar Senha
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="deleteAccount()">
+                                            <i class="fas fa-trash me-2"></i>Excluir Conta
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alterar Senha</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label class="form-label">Senha Atual</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="newPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" id="confirmNewPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveNewPassword()">Alterar Senha</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+    <!-- Auth JS -->
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Initialize profile page
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadProfileData();
+            initializeCharts();
+            loadHistory();
+        });
+
+        function loadProfileData() {
+            const userData = getUserData();
+            if (userData) {
+                // Update profile header
+                document.getElementById('userName').textContent = userData.name;
+                document.getElementById('profileName').textContent = userData.name;
+                document.getElementById('profileLocation').textContent = `${userData.city}, ${userData.state}`;
+                document.getElementById('profileSchool').textContent = userData.school || 'Não informado';
+                document.getElementById('profileRanking').textContent = `#${userData.rankingPosition || 0}`;
+                document.getElementById('profilePoints').textContent = userData.totalPoints || 0;
+                
+                // Update stats
+                document.getElementById('totalSimulados').textContent = userData.simuladosCompletos || 0;
+                document.getElementById('averageScore').textContent = `${userData.averageScore || 0}%`;
+                document.getElementById('studyTime').textContent = `${userData.studyTime || 0}h`;
+                document.getElementById('currentStreak').textContent = userData.currentStreak || 0;
+                
+                // Set avatars
+                const initials = userData.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+                document.getElementById('userAvatar').textContent = initials;
+                document.getElementById('profileAvatar').textContent = initials;
+                
+                // Fill form fields
+                document.getElementById('editName').value = userData.name;
+                document.getElementById('editEmail').value = userData.email;
+                document.getElementById('editSchool').value = userData.school || '';
+                document.getElementById('editCity').value = userData.city || '';
+            }
+        }
+
+        function initializeCharts() {
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                    datasets: [{
+                        label: 'Média Mensal (%)',
+                        data: [65, 72, 78, 75, 82, 85],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: function(value) { return value + '%'; } }
+                        }
+                    }
+                }
+            });
+
+            // Subject Chart
+            const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+            new Chart(subjectCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Matemática', 'Português', 'História', 'Geografia', 'Física'],
+                    datasets: [{
+                        data: [85, 92, 78, 68, 75],
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        function loadHistory() {
+            // Mock history data
+            const historyData = [
+                { date: '2024-01-15', subject: 'Matemática', questions: 20, correct: 17, score: 85, time: '25min' },
+                { date: '2024-01-14', subject: 'Português', questions: 15, correct: 14, score: 93, time: '18min' },
+                { date: '2024-01-13', subject: 'História', questions: 20, correct: 15, score: 75, time: '22min' }
+            ];
+
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = historyData.map(item => `
+                <tr>
+                    <td>${new Date(item.date).toLocaleDateString('pt-BR')}</td>
+                    <td>Simulado de ${item.subject}</td>
+                    <td><span class="badge bg-primary">${item.subject}</span></td>
+                    <td class="text-center">${item.questions}</td>
+                    <td class="text-center">${item.correct}</td>
+                    <td class="text-center">
+                    <span class="badge bg-${item.score >= 80 ? 'success' : item.score >= 60 ? 'warning' : 'danger'}">${item.score}%</span>
+                    </td>
+                    <td class="text-center">${item.time}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary" onclick="reviewSimulado('${item.date}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Load recent activity
+            const recentActivity = document.getElementById('recentActivityList');
+            recentActivity.innerHTML = historyData.slice(0, 5).map(item => `
+                <div class="activity-item d-flex align-items-center py-2 border-bottom">
+                    <div class="activity-icon me-3">
+                        <i class="fas fa-brain text-${item.score >= 80 ? 'success' : 'warning'}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">Simulado de ${item.subject}</div>
+                        <small class="text-muted">${new Date(item.date).toLocaleDateString('pt-BR')}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-${item.score >= 80 ? 'success' : 'warning'}">${item.score}%</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function changePassword() {
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        }
+ function saveNewPassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                showAlert('As senhas não coincidem!', 'danger');
+                return;
+            }
+
+            // Here you would typically send a request to the backend
+            console.log('Changing password...');
+            
+            bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+            showAlert('Senha alterada com sucesso!', 'success');
+        }
+
+        function deleteAccount() {
+            if (confirm('Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.')) {
+                // Here you would typically send a request to the backend
+                console.log('Deleting account...');
+                showAlert('Conta excluída com sucesso!', 'success');
+                setTimeout(() => {
+                    logout();
+                }, 2000);
+            }
+        }
+
+        function changeProfilePhoto() {
+            // Implementation for changing profile photo
+            console.log('Changing profile photo...');
+        }
+
+        function exportHistory() {
+            // Implementation for exporting history
+            console.log('Exporting history...');
+        }
+
+        function reviewSimulado(date) {
+            // Implementation for reviewing a specific simulado
+            console.log(`Reviewing simulado from ${date}`);
+        }
+
+        // Form submission handler
+        document.getElementById('personalInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('editName').value,
+                email: document.getElementById('editEmail').value,
+                school: document.getElementById('editSchool').value,
+                schoolYear: document.getElementById('editSchoolYear').value,
+                state: document.getElementById('editState').value,
+                city: document.getElementById('editCity').value
+            };
+
+            // Here you would typically send the data to the backend
+            console.log('Updating profile:', formData);
+            
+            showAlert('Perfil atualizado com sucesso!', 'success');
+        });
+    </script>
+</body>
+</html>
