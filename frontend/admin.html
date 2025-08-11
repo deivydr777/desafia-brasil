@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Desafia Brasil</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+ <body class="bg-light">
+    <!-- Admin Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="admin.html">
+                <i class="fas fa-shield-alt me-2"></i>Admin - Desafia Brasil
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="adminNavbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#questions" data-section="questions">
+                            <i class="fas fa-question-circle me-1"></i>Questões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#users" data-section="users">
+                            <i class="fas fa-users me-1"></i>Usuários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#simulados" data-section="simulados">
+                            <i class="fas fa-brain me-1"></i>Simulados
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reports" data-section="reports">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="navbar-nav dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-shield me-2"></i>Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="dashboard.html">
+                                <i class="fas fa-eye me-2"></i>Ver como Usuário
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="container-fluid mt-4">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="admin-section">
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card bg-primary text-white rounded p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-number h3 fw-bold mb-1" id="totalUsersCount">50,234</div>
+                                <div class="stats-label">Usuários Ativos</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-light text-primary">+12% este mês</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card bg-success text-white rounded p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-number h3 fw-bold mb-1" id="totalQuestionsCount">12,456</div>
+                                <div class="stats-label">Questões Cadastradas</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-question fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-light text-success">+8% este mês</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card bg-warning text-white rounded p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-number h3 fw-bold mb-1" id="totalSimuladosCount">120,567</div>
+                                <div class="stats-label">Simulados Realizados</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-brain fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-light text-warning">+25% esta semana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <div class="stats-card bg-info text-white rounded p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-number h3 fw-bold mb-1" id="avgPerformanceCount">76.8%</div>
+                                <div class="stats-label">Média Nacional</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-chart-line fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-light text-info">+2.1% este mês</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- Charts Row -->
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="fw-bold mb-0">Usuários Ativos (Últimos 30 dias)</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="usersChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="fw-bold mb-0">Matérias Mais Estudadas</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="subjectsChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="fw-bold mb-0">Atividade Recente</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentAdminActivity">
+                                <!-- Activity items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Questions Section -->
+        <div id="questions-section" class="admin-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Gerenciar Questões</h2>
+                <button class="btn btn-primary" onclick="showAddQuestionModal()">
+                    <i class="fas fa-plus me-2"></i>Nova Questão
+                </button>
+            </div>
+
+            <!-- Questions Filters -->
+            <div class="card border-0 shadow mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Matéria</label>
+                            <select class="form-select" id="questionSubjectFilter">
+                                <option value="">Todas as Matérias</option>
+                                <option value="matematica">Matemática</option>
+                                <option value="portugues">Português</option>
+                                <option value="historia">História</option>
+                                <option value="geografia">Geografia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Dificuldade</label>
+                            <select class="form-select" id="questionDifficultyFilter">
+                                <option value="">Todas</option>
+                                <option value="facil">Fácil</option>
+                                <option value="medio">Médio</option>
+                                <option value="dificil">Difícil</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="questionStatusFilter">
+                                <option value="">Todos</option>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Buscar</label>
+                            <input type="text" class="form-control" id="questionSearch" placeholder="Buscar questões...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions Table -->
+            <div class="card border-0 shadow">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 ps-4">ID</th>
+                                    <th class="border-0">Questão</th>
+                                    <th class="border-0">Matéria</th>
+                                    <th class="border-0">Dificuldade</th>
+                                    <th class="border-0">Fonte</th>
+                                    <th class="border-0">Status</th>
+                                    <th class="border-0 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="questionsTableBody">
+                                <!-- Questions data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <button class="btn btn-outline-primary" onclick="loadMoreQuestions()">
+                        <i class="fas fa-plus me-2"></i>Carregar Mais
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Users Section -->
+        <div id="users-section" class="admin-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Gerenciar Usuários</h2>
+                <div>
+                    <button class="btn btn-outline-success me-2" onclick="exportUsers()">
+                        <i class="fas fa-download me-2"></i>Exportar
+                    </button>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">
+                        <i class="fas fa-user-plus me-2"></i>Novo Usuário
+                    </button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card border-0 shadow">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="border-0 ps-4">ID</th>
+                                    <th class="border-0">Nome</th>
+                                    <th class="border-0">E-mail</th>
+                                    <th class="border-0">Localização</th>
+                                    <th class="border-0">Simulados</th>
+                                    <th class="border-0">Pontos</th>
+                                    <th class="border-0">Cadastro</th>
+                                    <th class="border-0 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Reports Section -->
+        <div id="reports-section" class="admin-section d-none">
+            <h2 class="fw-bold mb-4">Relatórios e Estatísticas</h2>
+            
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="fw-bold mb-0">Performance por Estado</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="statesChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="fw-bold mb-0">Crescimento de Usuários</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="growthChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Add Question Modal -->
+    <div class="modal fade" id="addQuestionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nova Questão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addQuestionForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Matéria</label>
+                                <select class="form-select" id="newQuestionSubject" required>
+                                    <option value="">Selecione a matéria</option>
+                                    <option value="matematica">Matemática</option>
+                                    <option value="portugues">Português</option>
+                                    <option value="historia">História</option>
+                                    <option value="geografia">Geografia</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Dificuldade</label>
+                                <select class="form-select" id="newQuestionDifficulty" required>
+                                    <option value="">Selecione a dificuldade</option>
+                                    <option value="facil">Fácil</option>
+                                    <option value="medio">Médio</option>
+                                    <option value="dificil">Difícil</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Enunciado da Questão</label>
+                                <textarea class="form-control" id="newQuestionText" rows="4" required 
+                                          placeholder="Digite o enunciado completo da questão..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Alternativas</label>
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">A)</span>
+                                            <input type="text" class="form-control" id="optionA" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">B)</span>
+                                            <input type="text" class="form-control" id="optionB" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">C)</span>
+                                            <input type="text" class="form-control" id="optionC" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">D)</span>
+                                            <input type="text" class="form-control" id="optionD" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-group">
+                                            <span class="input-group-text">E)</span>
+                                            <input type="text" class="form-control" id="optionE" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Resposta Correta</label>
+                                <select class="form-select" id="correctAnswer" required>
+                                    <option value="">Selecione a resposta</option>
+                                    <option value="a">A</option>
+                                    <option value="b">B</option>
+                                    <option value="c">C</option>
+                                    <option value="d">D</option>
+                                    <option value="e">E</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fonte</label>
+                                <select class="form-select" id="questionSource">
+                                    <option value="enem">ENEM</option>
+                                    <option value="fuvest">FUVEST</option>
+                                    <option value="unicamp">UNICAMP</option>
+                                    <option value="unesp">UNESP</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Explicação da Resposta</label>
+                                <textarea class="form-control" id="questionExplanation" rows="3" 
+                                          placeholder="Explicação detalhada da resposta correta..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveQuestion()">Salvar Questão</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Admin JS -->
+    <script src="js/admin.js"></script>
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+
+    <script>
+        // Initialize admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check admin authentication
+            if (!checkAdminAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            initializeAdminPanel();
+            loadDashboardData();
+            setupNavigation();
+        });
+
+        function checkAdminAuth() {
+            // Check if user is admin (simplified check)
+            const userData = getUserData();
+            return userData && userData.isAdmin;
+        }
+
+        function initializeAdminPanel() {
+            // Initialize charts and load data
+            initializeAdminCharts();
+            loadQuestionsData();
+            loadUsersData();
+        }
+
+        function setupNavigation() {
+            // Admin navigation handler
+            document.querySelectorAll('[data-section]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    showAdminSection(section);
+                    
+                    // Update active nav
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function showAdminSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.add('d-none'));
+            
+            // Show selected section
+            document.getElementById(`${section}-section`).classList.remove('d-none');
+        }
+        function initializeAdminCharts() {
+            // Users Chart
+            const usersCtx = document.getElementById('usersChart').getContext('2d');
+            new Chart(usersCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 30}, (_, i) => `${30-i}d`),
+                    datasets: [{
+                        label: 'Usuários Ativos',
+                        data: Array.from({length: 30}, () => Math.floor(Math.random() * 1000) + 500),
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Subjects Chart
+            const subjectsCtx = document.getElementById('subjectsChart').getContext('2d');
+            new Chart(subjectsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Matemática', 'Português', 'História', 'Geografia', 'Física'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        function loadDashboardData() {
+            // Load recent admin activity
+            const recentActivity = [
+                { action: 'Nova questão de Matemática adicionada', time: '2 min atrás', icon: 'fa-plus', color: 'success' },
+                { action: 'Usuário João Silva banido', time: '15 min atrás', icon: 'fa-ban', color: 'danger' },
+                { action: 'Relatório mensal gerado', time: '1 hora atrás', icon: 'fa-chart-bar', color: 'info' },
+                { action: '50 questões revisadas', time: '2 horas atrás', icon: 'fa-check', color: 'primary' }
+            ];
+
+            document.getElementById('recentAdminActivity').innerHTML = recentActivity.map(item => `
+                <div class="activity-item d-flex align-items-center py-2 border-bottom">
+                    <div class="activity-icon me-3">
+                        <i class="fas ${item.icon} text-${item.color}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">${item.action}</div>
+                        <small class="text-muted">${item.time}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function loadQuestionsData() {
+            // Mock questions data
+            const questions = [
+                { id: 1, text: 'Qual é a derivada de x²?', subject: 'Matemática', difficulty: 'Médio', source: 'ENEM', status: 'Ativo' },
+                { id: 2, text: 'Quem escreveu Dom Casmurro?', subject: 'Português', difficulty: 'Fácil', source: 'FUVEST', status: 'Ativo' }
+            ];
+
+            const tbody = document.getElementById('questionsTableBody');
+            tbody.innerHTML = questions.map(q => `
+                <tr>
+                    <td class="ps-4">#${q.id}</td>
+                    <td>${q.text.substring(0, 50)}...</td>
+                    <td><span class="badge bg-primary">${q.subject}</span></td>
+                    <td><span class="badge bg-warning">${q.difficulty}</span></td>
+                    <td>${q.source}</td>
+                    <td><span class="badge bg-success">${q.status}</span></td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editQuestion(${q.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteQuestion(${q.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadUsersData() {
+            // Mock users data
+            const users = [
+                { id: 1, name: 'João Silva', email: 'joao@email.com', location: 'São Paulo, SP', simulados: 23, points: 1245, date: '2024-01-15' },
+                { id: 2, name: 'Maria Santos', email: 'maria@email.com', location: 'Rio de Janeiro, RJ', simulados: 45, points: 1890, date: '2024-01-10' }
+            ];
+
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td class="ps-4">#${u.id}</td>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${u.location}</td>
+                    <td>${u.simulados}</td>
+                    <td>${u.points}</td>
+                    <td>${new Date(u.date).toLocaleDateString('pt-BR')}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewUser(${u.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="banUser(${u.id})">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        function showAddQuestionModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addQuestionModal'));
+            modal.show();
+        }
+
+        function saveQuestion() {
+            // Implementation for saving new question
+            const questionData = {
+                subject: document.getElementById('newQuestionSubject').value,
+                difficulty: document.getElementById('newQuestionDifficulty').value,
+                text: document.getElementById('newQuestionText').value,
+                options: {
+                    a: document.getElementById('optionA').value,
+                    b: document.getElementById('optionB').value,
+                    c: document.getElementById('optionC').value,
+                    d: document.getElementById('optionD').value,
+                    e: document.getElementById('optionE').value
+                },
+                correctAnswer: document.getElementById('correctAnswer').value,
+                source: document.getElementById('questionSource').value,
+                explanation: document.getElementById('questionExplanation').value
+            };
+
+            console.log('Saving question:', questionData);
+            
+            bootstrap.Modal.getInstance(document.getElementById('addQuestionModal')).hide();
+            showAlert('Questão adicionada com sucesso!', 'success');
+            loadQuestionsData();
+        }
+
+        function editQuestion(id) {
+            console.log('Editing question:', id);
+        }
+
+        function deleteQuestion(id) {
+            if (confirm('Tem certeza que deseja excluir esta questão?')) {
+                console.log('Deleting question:', id);
+                showAlert('Questão excluída com sucesso!', 'success');
+                loadQuestionsData();
+            }
+        }
+
+        function viewUser(id) {
+            console.log('Viewing user:', id);
+        }
+
+        function banUser(id) {
+            if (confirm('Tem certeza que deseja banir este usuário?')) {
+                console.log('Banning user:', id);
+                showAlert('Usuário banido com sucesso!', 'warning');
+                loadUsersData();
+            }
+        }
+
+        function exportUsers() {
+            console.log('Exporting users...');
+        }
+
+        function loadMoreQuestions() {
+            console.log('Loading more questions...');
+        }
+    </script>
+</body>
+</html>
