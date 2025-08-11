@@ -11,8 +11,8 @@ const AuthConfig = {
     LOCKOUT_DURATION_MINUTES: 15,
     PASSWORD_MIN_LENGTH: 6,
     DEMO_CREDENTIALS: {
-        email: 'demo@demo.com',
-        password: '123456'
+        email: 'admin',
+        password: 'admin'
     }
 };
 
