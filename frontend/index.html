@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafia Brasil - Simulados e Quizzes para Vestibular</title>
+    <meta name="description" content="Plataforma nacional de simulados gratuitos para vestibulandos. Treine, compete e conquiste sua aprovação!">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="index.html">
+                <i class="fas fa-graduation-cap me-2"></i>Desafia Brasil
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre">Sobre</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#funcionalidades">Recursos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ranking.html">Ranking</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-2" href="login.html">Entrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="cadastro.html">Cadastrar</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section bg-gradient-primary text-white">
+        <div class="container">
+            <div class="row align-items-center min-vh-100 pt-5">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Conquiste sua <span class="text-warning">aprovação</span> com os melhores simulados!
+                    </h1>
+                    <p class="lead mb-4">
+                        Plataforma nacional gratuita com milhares de questões do ENEM, FUVEST e principais vestibulares do Brasil. 
+                        Compete com estudantes de todo o país e acompanhe sua evolução!
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <a href="cadastro.html" class="btn btn-warning btn-lg px-4">
+                            <i class="fas fa-rocket me-2"></i>Começar Agora
+                        </a>
+                        <a href="#sobre" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-play me-2"></i>Como Funciona
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero-image">
+                        <i class="fas fa-trophy display-1 text-warning mb-4"></i>
+                        <div class="stats-card bg-white text-dark rounded p-4 shadow">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h3 class="fw-bold text-primary" id="totalUsers">50K+</h3>
+                                    <small>Estudantes</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="fw-bold text-success" id="totalQuestions">10K+</h3>
+                                    <small>Questões</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="fw-bold text-warning" id="totalSimulados">100K+</h3>
+                                    <small>Simulados</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Funcionalidades -->
+    <section id="funcionalidades" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center mb-5">
+                    <h2 class="display-5 fw-bold">Por que escolher o Desafia Brasil?</h2>
+                    <p class="lead text-muted">Recursos desenvolvidos especialmente para maximizar seu desempenho nos vestibulares</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <!-- Simulados Personalizados -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card h-100 p-4 rounded shadow-sm border">
+                        <div class="feature-icon text-primary mb-3">
+                            <i class="fas fa-brain fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Simulados Inteligentes</h4>
+                        <p class="text-muted">
+                            Algoritmo adapta a dificuldade baseado no seu desempenho. 
+                            Questões do ENEM, FUVEST, UNICAMP e principais vestibulares.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Ranking Nacional -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card h-100 p-4 rounded shadow-sm border">
+                        <div class="feature-icon text-success mb-3">
+                            <i class="fas fa-trophy fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Ranking Nacional</h4>
+                        <p class="text-muted">
+                            Compete com estudantes de todo o Brasil. Veja sua posição 
+                            por estado, cidade e acompanhe sua evolução em tempo real.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Análise de Desempenho -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card h-100 p-4 rounded shadow-sm border">
+                        <div class="feature-icon text-warning mb-3">
+                            <i class="fas fa-chart-line fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Análise Completa</h4>
+                        <p class="text-muted">
+                            Relatórios detalhados por matéria, gráficos de evolução 
+                            e identificação dos pontos que precisam de mais atenção.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Explicações Detalhadas -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card h-100 p-4 rounded shadow-sm border">
+                        <div class="feature-icon text-info mb-3">
+                            <i class="fas fa-lightbulb fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Explicações Completas</h4>
+                        <p class="text-muted">
+                            Cada questão possui explicação detalhada do gabarito, 
+                            dicas de resolução e links para conteúdos complementares.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mobile First -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card h-100 p-4 rounded shadow-sm border">
+                        <div class="feature-icon text-danger mb-3">
+                            <i class="fas fa-mobile-alt fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">100% Mobile</h4>
+                        <p class="text-muted">
+                            Interface otimizada para celular. Estude em qualquer lugar, 
+                            offline ou online, com sincronização automática.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Totalmente Gratuito -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card h-100 p-4 rounded shadow-sm border">
+                        <div class="feature-icon text-success mb-3">
+                            <i class="fas fa-heart fa-3x"></i>
+                        </div>
+                        <h4 class="fw-bold">Totalmente Gratuito</h4>
+                        <p class="text-muted">
+                            Acesso completo e ilimitado a todos os recursos. 
+                            Nossa missão é democratizar a educação de qualidade.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre -->
+    <section id="sobre" class="py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="display-5 fw-bold mb-4">Como funciona?</h2>
+                    <div class="step-list">
+                        <div class="step-item d-flex mb-4">
+                            <div class="step-number bg-primary text-white rounded-circle me-3">1</div>
+                            <div>
+                                <h5 class="fw-bold">Cadastre-se gratuitamente</h5>
+                                <p class="text-muted mb-0">Crie sua conta em menos de 1 minuto e tenha acesso completo à plataforma.</p>
+                            </div>
+                        </div>
+                        <div class="step-item d-flex mb-4">
+                            <div class="step-number bg-primary text-white rounded-circle me-3">2</div>
+                            <div>
+                                <h5 class="fw-bold">Escolha seu simulado</h5>
+                                <p class="text-muted mb-0">Selecione por matéria, dificuldade ou faça simulados completos do ENEM.</p>
+                            </div>
+                        </div>
+                        <div class="step-item d-flex mb-4">
+                            <div class="step-number bg-primary text-white rounded-circle me-3">3</div>
+                            <div>
+                                <h5 class="fw-bold">Resolva e aprenda</h5>
+                                <p class="text-muted mb-0">Responda as questões e receba explicações detalhadas instantaneamente.</p>
+                            </div>
+                        </div>
+                        <div class="step-item d-flex">
+                            <div class="step-number bg-primary text-white rounded-circle me-3">4</div>
+                            <div>
+                                <h5 class="fw-bold">Acompanhe sua evolução</h5>
+                                <p class="text-muted mb-0">Veja seu progresso no ranking e identifique pontos de melhoria.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <div class="mockup-browser bg-white rounded shadow">
+                            <div class="mockup-browser-toolbar bg-light p-2 rounded-top">
+                                <div class="mockup-browser-dots d-flex">
+                                    <span class="bg-danger rounded-circle me-1"></span>
+                                    <span class="bg-warning rounded-circle me-1"></span>
+                                    <span class="bg-success rounded-circle"></span>
+                                </div>
+                            </div>
+                            <div class="mockup-browser-content p-4">
+                                <div class="progress mb-3" style="height: 10px;">
+                                    <div class="progress-bar bg-success" style="width: 75%"></div>
+                                </div>
+                                <h6 class="fw-bold">Questão 15 de 20</h6>
+                                <p class="small text-muted">Matemática - ENEM 2022</p>
+                                <div class="text-start">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="question" checked>
+                                        <label class="form-check-label small">A) Alternativa correta</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="question">
+                                        <label class="form-check-label small">B) Outra alternativa</label>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-sm mt-3">Próxima →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section bg-gradient-primary text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4">Pronto para começar?</h2>
+                    <p class="lead mb-4">
+                        Junte-se a milhares de estudantes que já estão se preparando com o Desafia Brasil. 
+                        É gratuito, é fácil e pode fazer toda a diferença na sua aprovação!
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a href="cadastro.html" class="btn btn-warning btn-lg px-5">
+                            <i class="fas fa-user-plus me-2"></i>Criar Conta Grátis
+                        </a>
+                        <a href="login.html" class="btn btn-outline-light btn-lg px-5">
+                            <i class="fas fa-sign-in-alt me-2"></i>Já tenho conta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-graduation-cap me-2"></i>Desafia Brasil
+                    </h5>
+                    <p class="text-muted">
+                        Plataforma nacional de simulados gratuitos para vestibular. 
+                        Democratizando o acesso à educação de qualidade.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="text-light me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold">Plataforma</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="simulado.html" class="text-muted text-decoration-none">Simulados</a></li>
+                        <li><a href="ranking.html" class="text-muted text-decoration-none">Ranking</a></li>
+                        <li><a href="perfil.html" class="text-muted text-decoration-none">Perfil</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold">Suporte</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">FAQ</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Contato</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Ajuda</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h6 class="fw-bold">Newsletter</h6>
+                    <p class="text-muted small">Receba dicas de estudo e novidades da plataforma</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Seu e-mail">
+                        <button class="btn btn-primary">Inscrever</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted mb-0">&copy; 2024 Desafia Brasil. Todos os direitos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-muted text-decoration-none me-3">Privacidade</a>
+                    <a href="#" class="text-muted text-decoration-none me-3">Termos</a>
+                    <a href="#" class="text-muted text-decoration-none">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay d-none">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+</body>
+</html>
