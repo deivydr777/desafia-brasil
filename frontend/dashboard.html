@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Desafia Brasil</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="dashboard.html">
+                <i class="fas fa-graduation-cap me-2"></i>Desafia Brasil
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="simulado.html">
+                            <i class="fas fa-brain me-1"></i>Simulados
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ranking.html">
+                            <i class="fas fa-trophy me-1"></i>Ranking
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar bg-primary text-white rounded-circle me-2" id="userAvatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span id="userName">Usuário</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="perfil.html">
+                                <i class="fas fa-user me-2"></i>Perfil
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="showSettings()">
+                                <i class="fas fa-cog me-2"></i>Configurações
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="welcome-card bg-gradient-primary text-white rounded p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="fw-bold mb-2">Olá, <span id="welcomeName">Estudante</span>! 👋</h2>
+                            <p class="mb-3 opacity-75">Continue sua jornada rumo à aprovação. Você já completou <span id="completedSimulados">0</span> simulados!</p>
+                            <a href="simulado.html" class="btn btn-warning">
+                                <i class="fas fa-play me-2"></i>Fazer Simulado
+                            </a>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="streak-counter bg-white bg-opacity-20 rounded p-3">
+                                <div class="display-4 fw-bold" id="currentStreak">0</div>
+                                <small>dias seguidos</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="stats-card bg-white rounded p-3 shadow-sm text-center h-100">
+                    <div class="stats-icon text-primary mb-2">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stats-number fw-bold text-primary" id="totalPoints">0</div>
+                    <small class="text-muted">Pontos Totais</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card bg-white rounded p-3 shadow-sm text-center h-100">
+                    <div class="stats-icon text-success mb-2">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stats-number fw-bold text-success" id="averageScore">0%</div>
+                    <small class="text-muted">Média Geral</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card bg-white rounded p-3 shadow-sm text-center h-100">
+                    <div class="stats-icon text-warning mb-2">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="stats-number fw-bold text-warning" id="rankingPosition">#0</div>
+                    <small class="text-muted">Posição Nacional</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card bg-white rounded p-3 shadow-sm text-center h-100">
+                    <div class="stats-icon text-info mb-2">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stats-number fw-bold text-info" id="studyTime">0h</div>
+                    <small class="text-muted">Tempo de Estudo</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-bolt text-warning me-2"></i>
+                            Ações Rápidas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <a href="simulado.html?type=enem" class="quick-action-btn text-decoration-none">
+                                    <div class="text-center p-3 rounded border">
+                                        <i class="fas fa-graduation-cap fa-2x text-primary mb-2"></i>
+                                        <div class="fw-bold">ENEM</div>
+                                        <small class="text-muted">Simulado completo</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="simulado.html?type=matematica" class="quick-action-btn text-decoration-none">
+                                    <div class="text-center p-3 rounded border">
+                                        <i class="fas fa-calculator fa-2x text-success mb-2"></i>
+                                        <div class="fw-bold">Matemática</div>
+                                        <small class="text-muted">20 questões</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="simulado.html?type=portugues" class="quick-action-btn text-decoration-none">
+                                    <div class="text-center p-3 rounded border">
+                                        <i class="fas fa-book fa-2x text-info mb-2"></i>
+                                        <div class="fw-bold">Português</div>
+                                        <small class="text-muted">15 questões</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a href="simulado.html?type=random" class="quick-action-btn text-decoration-none">
+                                    <div class="text-center p-3 rounded border">
+                                        <i class="fas fa-random fa-2x text-warning mb-2"></i>
+                                        <div class="fw-bold">Aleatório</div>
+                                        <small class="text-muted">Mix de matérias</small>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Chart -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-chart-line text-success me-2"></i>
+                            Evolução dos Últimos 7 Dias
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performanceChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-bullseye text-danger me-2"></i>
+                            Metas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="goal-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold">Meta Diária</small>
+                                <small class="text-muted">3/5 questões</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold">Meta Semanal</small>
+                                <small class="text-muted">2/3 simulados</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-warning" style="width: 67%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="goal-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="fw-bold">Média Geral</small>
+                                <small class="text-muted">75/80%</small>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" style="width: 94%"></div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-outline-primary btn-sm w-100" onclick="showGoalsModal()">
+                            <i class="fas fa-edit me-2"></i>Editar Metas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-history text-info me-2"></i>
+                            Atividade Recente
+                        </h5>
+                        <a href="perfil.html" class="btn btn-outline-primary btn-sm">Ver Todas</a>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentActivity">
+                            <!-- Atividades serão carregadas via JavaScript -->
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                Carregando atividades...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Performance -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fas fa-books text-primary me-2"></i>
+                            Desempenho por Matéria
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="subjectPerformance">
+                            <!-- Performance por matéria será carregada via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Metas -->
+    <div class="modal fade" id="goalsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Definir Metas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Meta de questões por dia</label>
+                        <input type="number" class="form-control" id="dailyGoal" value="5" min="1" max="50">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Meta de simulados por semana</label>
+                        <input type="number" class="form-control" id="weeklyGoal" value="3" min="1" max="10">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Meta de média geral (%)</label>
+                        <input type="number" class="form-control" id="averageGoal" value="80" min="50" max="100">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveGoals()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main JS -->
+    <script src="js/main.js"></script>
+    <!-- Auth JS -->
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is authenticated
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadDashboardData();
+            initializeChart();
+        });
+
+        function loadDashboardData() {
+            // Load user stats from localStorage or API
+            const userData = getUserData();
+            
+            if (userData) {
+                document.getElementById('welcomeName').textContent = userData.name;
+                document.getElementById('userName').textContent = userData.name;
+                document.getElementById('totalPoints').textContent = userData.totalPoints || 0;
+                document.getElementById('averageScore').textContent = `${userData.averageScore || 0}%`;
+                document.getElementById('rankingPosition').textContent = `#${userData.rankingPosition || 0}`;
+                document.getElementById('completedSimulados').textContent = userData.simuladosCompletos || 0;
+                document.getElementById('currentStreak').textContent = userData.currentStreak || 0;
+                document.getElementById('studyTime').textContent = `${userData.studyTime || 0}h`;
+                
+                // Set user avatar initials
+                const initials = userData.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+                document.getElementById('userAvatar').textContent = initials;
+            }
+
+            loadRecentActivity();
+            loadSubjectPerformance();
+        }
+
+        function loadRecentActivity() {
+            const activities = [
+                { type: 'simulado', subject: 'Matemática', score: 85, time: '2 horas atrás' },
+                { type: 'quiz', subject: 'Português', score: 92, time: '1 dia atrás' },
+                { type: 'simulado', subject: 'ENEM Completo', score: 78, time: '2 dias atrás' },
+                { type: 'quiz', subject: 'História', score: 88, time: '3 dias atrás' }
+            ];
+
+            const activityHtml = activities.map(activity => `
+                <div class="activity-item d-flex align-items-center py-2 border-bottom">
+                    <div class="activity-icon me-3">
+                        <i class="fas ${activity.type === 'simulado' ? 'fa-brain' : 'fa-question-circle'} 
+                           ${activity.score >= 80 ? 'text-success' : activity.score >= 60 ? 'text-warning' : 'text-danger'}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">${activity.subject}</div>
+                        <small class="text-muted">${activity.time}</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold ${activity.score >= 80 ? 'text-success' : activity.score >= 60 ? 'text-warning' : 'text-danger'}">${activity.score}%</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('recentActivity').innerHTML = activityHtml;
+        }
+
+        function loadSubjectPerformance() {
+            const subjects = [
+  
