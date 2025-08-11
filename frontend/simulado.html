@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulados - Desafia Brasil</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="dashboard.html">
+                <i class="fas fa-graduation-cap me-2"></i>Desafia Brasil
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="simulado.html">
+                            <i class="fas fa-brain me-1"></i>Simulados
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ranking.html">
+                            <i class="fas fa-trophy me-1"></i>Ranking
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar bg-primary text-white rounded-circle me-2" id="userAvatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span id="userName">Usuário</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="perfil.html">
+                                <i class="fas fa-user me-2"></i>Perfil
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <!-- Simulado Selection Screen -->
+        <div id="selectionScreen">
+            <!-- Filter Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="fw-bold mb-0">
+                                <i class="fas fa-filter me-2"></i>
+                                Escolha seu Simulado
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Matéria</label>
+                                    <select class="form-select" id="subjectFilter">
+                                        <option value="">Todas as Matérias</option>
+                                        <option value="matematica">Matemática</option>
+                                        <option value="portugues">Português</option>
+                                        <option value="historia">História</option>
+                                        <option value="geografia">Geografia</option>
+                                        <option value="fisica">Física</option>
+                                        <option value="quimica">Química</option>
+                                        <option value="biologia">Biologia</option>
+                                        <option value="filosofia">Filosofia</option>
+                                        <option value="sociologia">Sociologia</option>
+                                        <option value="ingles">Inglês</option>
+                                        <option value="enem">ENEM Completo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Dificuldade</label>
+                                    <select class="form-select" id="difficultyFilter">
+                                        <option value="">Todas</option>
+                                        <option value="facil">Fácil</option>
+                                        <option value="medio">Médio</option>
+                                        <option value="dificil">Difícil</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Número de Questões</label>
+                                    <select class="form-select" id="questionsCount">
+                                        <option value="10">10 questões</option>
+                                        <option value="20" selected>20 questões</option>
+                                        <option value="30">30 questões</option>
+                                        <option value="45">45 questões (ENEM)</option>
+                                        <option value="90">90 questões (ENEM Completo)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Fonte</label>
+                                    <select class="form-select" id="sourceFilter">
+                                        <option value="">Todas as Fontes</option>
+                                        <option value="enem">ENEM</option>
+                                        <option value="fuvest">FUVEST</option>
+                                        <option value="unicamp">UNICAMP</option>
+                                        <option value="unesp">UNESP</option>
+                                        <option value="uerj">UERJ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <button class="btn btn-primary me-2" onclick="startSimulado()">
+                                        <i class="fas fa-play me-2"></i>Iniciar Simulado
+                                    </button>
+                                    <button class="btn btn-outline-primary" onclick="startRandomSimulado()">
+                                        <i class="fas fa-random me-2"></i>Simulado Aleatório
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Start Options -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="quick-start-card card border-0 shadow-sm h-100" onclick="startQuickSimulado('enem')">
+                        <div class="card-body text-center p-4">
+                            <div class="quick-icon bg-primary text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h5 class="fw-bold">ENEM Completo</h5>
+                            <p class="text-muted mb-3">90 questões • 5h30min</p>
+                            <div class="badge bg-primary">Mais Popular</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="quick-start-card card border-0 shadow-sm h-100" onclick="startQuickSimulado('matematica')">
+                        <div class="card-body text-center p-4">
+                            <div class="quick-icon bg-success text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h5 class="fw-bold">Matemática</h5>
+                            <p class="text-muted mb-3">20 questões • 40min</p>
+                            <div class="badge bg-success">Recomendado</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="quick-start-card card border-0 shadow-sm h-100" onclick="startQuickSimulado('portugues')">
+                        <div class="card-body text-center p-4">
+                            <div class="quick-icon bg-info text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h5 class="fw-bold">Português</h5>
+                            <p class="text-muted mb-3">15 questões • 30min</p>
+                            <div class="badge bg-info">Essencial</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="quick-start-card card border-0 shadow-sm h-100" onclick="startQuickSimulado('random')">
+                        <div class="card-body text-center p-4">
+                            <div class="quick-icon bg-warning text-white rounded-circle mx-auto mb-3">
+                                <i class="fas fa-random"></i>
+                            </div>
+                            <h5 class="fw-bold">Surpresa</h5>
+                            <p class="text-muted mb-3">Mix • 20min</p>
+                            <div class="badge bg-warning">Desafio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulado Quiz Screen -->
+        <div id="quizScreen" class="d-none">
+            <!-- Quiz Header -->
+            <div class="quiz-header bg-white rounded shadow-sm mb-4 p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h4 class="fw-bold mb-2" id="quizTitle">Simulado de Matemática</h4>
+                        <div class="quiz-info">
+                            <span class="badge bg-primary me-2" id="quizSubject">Matemática</span>
+                            <span class="badge bg-secondary me-2" id="quizDifficulty">Médio</span>
+                            <span class="text-muted" id="quizSource">ENEM 2022</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="quiz-timer mb-2">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <span class="fw-bold" id="timeRemaining">15:00</span>
+                        </div>
+                        <div class="quiz-progress">
+                            <span class="text-muted">Questão <span id="currentQuestion">1</span> de <span id="totalQuestions">20</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress mt-3" style="height: 8px;">
+                    <div class="progress-bar bg-success" id="progressBar" style="width: 5%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="question-content">
+                        <div class="question-text mb-4" id="questionText">
+                            <!-- Questão será carregada aqui -->
+                        </div>
+                        
+                        <div class="question-options" id="questionOptions">
+                            <!-- Opções serão carregadas aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="quiz-navigation bg-white rounded shadow-sm p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-secondary" id="prevBtn" onclick="previousQuestion()" disabled>
+                            <i class="fas fa-arrow-left me-2"></i>Anterior
+                        </button>
+                        <button class="btn btn-outline-warning ms-2" onclick="skipQuestion()">
+                            <i class="fas fa-forward me-2"></i>Pular
+                        </button>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <button class="btn btn-outline-danger me-2" onclick="pauseSimulado()">
+                            <i class="fas fa-pause me-2"></i>Pausar
+                        </button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                            Próxima <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                        <button class="btn btn-success d-none" id="finishBtn" onclick="finishSimulado()">
+                            <i class="fas fa-check me-2"></i>Finalizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Navigator -->
+            <div class="questions-navigator mt-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-list me-2"></i>Navegação Rápida
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="questions-grid" id="questionsGrid">
+                            <!-- Grid de questões será gerado aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="d-none">
+            <div class="results-header text-center mb-4">
+                <div class="results-icon text-success mb-3">
+                    <i class="fas fa-trophy fa-4x"></i>
+                </div>
+                <h2 class="fw-bold">Simulado Concluído!</h2>
+                <p class="text-muted">Confira seu desempenho abaixo</p>
+            </div>
+
+            <!-- Score Card -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8">
+                    <div class="score-card card border-0 shadow">
+                        <div class="card-body p-5 text-center">
+                            <div class="score-display mb-4">
+                                <div class="display-2 fw-bold text-primary" id="finalScore">85%</div>
+                                <div class="h4 text-muted" id="scoreDetails">17 de 20 questões corretas</div>
+                            </div>
+                            
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <div class="h5 fw-bold text-success" id="correctAnswers">17</div>
+                                        <small class="text-muted">Acertos</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <div class="h5 fw-bold text-danger" id="wrongAnswers">3</div>
+                                        <small class="text-muted">Erros</small>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-item">
+                                        <div class="h5 fw-bold text-warning" id="pointsEarned">85</div>
+                                        <small class="text-muted">Pontos</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Results -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="fw-bold mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Revisão Detalhada
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="detailedResults">
+                                <!-- Revisão detalhada será carregada aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4">
+                <button class="btn btn-primary me-3" onclick="startNewSimulado()">
+                    <i class="fas fa-redo me-2"></i>Novo Simulado
+                </button>
+                <button class="btn btn-outline-primary me-3" onclick="reviewAnswers()">
+                    <i class="fas fa-eye me-2"></i>Revisar Respostas
+                </button>
+                <a href="ranking.html" class="btn btn-outline-success">
+                    <i class="fas fa-trophy me-2"></i>Ver Ranking
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pause Modal -->
+    <div class="modal fade" id="pauseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Simulado Pausado</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <i class="fas fa-pause fa-3x text-warning mb-3"></i>
+                    <p>Seu simulado foi pausado. O cronômetro está parado.</p>
+                    <p class="text-muted">Quando estiver pronto, clique em "Continuar" para retomar.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-danger" onclick
