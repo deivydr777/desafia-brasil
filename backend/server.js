@@ -64,4 +64,4 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason, promise) => {
     console.error('❌ Promise rejeitada não tratada em:', promise, 'Razão:', reason);
     process.exit(1);
-})
+});
