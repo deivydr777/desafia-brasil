@@ -4,7 +4,7 @@
    Versão Firebase Firestore
    ================================== */
 
-const { database, collections, FirestoreUtils } = require('../config/database');
+const { database, collections, FirestoreUtils } = require('../../config/database');
 const User = require('../models/User');
 const Question = require('../models/Question');
 
