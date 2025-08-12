@@ -6,6 +6,7 @@
 
 // Configurações de autenticação
 const AuthConfig = {
+    API_BASE_URL: 'https://desafia-brasil.onrender.com', // ✅ SUA URL DO RENDER
     TOKEN_EXPIRY_HOURS: 24,
     MAX_LOGIN_ATTEMPTS: 5,
     LOCKOUT_DURATION_MINUTES: 15,
@@ -83,8 +84,7 @@ class AuthSystem {
             }
         }
     }
-}
-    // Manipular login
+       // Manipular login
     async handleLogin(event) {
         event.preventDefault();
         
@@ -118,7 +118,7 @@ class AuthSystem {
                 return;
             }
 
-            // Tentar login real via API
+            // ✅ LOGIN REAL VIA API DO RENDER
             const response = await this.performLogin(email, password, rememberMe);
             
             if (response.success) {
@@ -137,7 +137,154 @@ class AuthSystem {
         }
     }
 
-    // Validar formulário de login
+    // ✅ FUNÇÃO DE LOGIN ATUALIZADA PARA SUA API
+    async performLogin(email, password, rememberMe) {
+        try {
+            const response = await fetch(`${AuthConfig.API_BASE_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    senha: password,
+                    lembrarMe: rememberMe
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                return {
+                    success: true,
+                    data: {
+                        user: result.user,
+                        token: result.authentication.accessToken
+                    }
+                };
+            } else {
+                return {
+                    success: false,
+                    error: result.message || 'Credenciais inválidas'
+                };
+            }
+
+        } catch (error) {
+            console.error('Erro na requisição de login:', error);
+            return {
+                success: false,
+                error: 'Erro de conexão. Verifique sua internet.'
+            };
+        }
+    }
+       // ✅ FUNÇÃO DE REGISTRO ATUALIZADA PARA SUA API
+    async performRegistration(userData) {
+        try {
+            const response = await fetch(`${AuthConfig.API_BASE_URL}/api/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nome: userData.name,
+                    email: userData.email,
+                    senha: userData.password,
+                    confirmarSenha: userData.password,
+                    escola: userData.school,
+                    serie: userData.schoolYear,
+                    cidade: userData.city,
+                    estado: userData.state,
+                    telefone: userData.phone || '',
+                    materiasFavoritas: userData.favoriteSubjects || [],
+                    objetivos: userData.targetExam || ''
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                return {
+                    success: true,
+                    data: {
+                        user: result.user,
+                        token: result.authentication.accessToken
+                    }
+                };
+            } else {
+                return {
+                    success: false,
+                    error: result.message || 'Erro ao criar conta'
+                };
+            }
+
+        } catch (error) {
+            console.error('Erro na requisição de registro:', error);
+            return {
+                success: false,
+                error: 'Erro de conexão. Verifique sua internet.'
+            };
+        }
+    }
+
+    // Manipular cadastro
+    async handleRegister(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const currentStep = this.getCurrentStep(form);
+        
+        if (currentStep < 3) {
+            // Validar step atual e avançar
+            if (this.validateCurrentStep(currentStep)) {
+                this.nextStep(currentStep);
+            }
+        } else {
+            // Step final - processar cadastro
+            await this.processRegistration(form);
+        }
+    }
+
+    // Processar cadastro final
+    async processRegistration(form) {
+        const formData = new FormData(form);
+        const userData = {
+            name: formData.get('fullName')?.trim(),
+            email: formData.get('email')?.trim().toLowerCase(),
+            password: formData.get('password'),
+            schoolYear: formData.get('schoolYear'),
+            school: formData.get('school')?.trim() || '',
+            targetExam: formData.get('targetExam'),
+            state: formData.get('state'),
+            city: formData.get('city')?.trim(),
+            agreeTerms: formData.get('agreeTerms') === 'on',
+            agreeEmails: formData.get('agreeEmails') === 'on'
+        };
+
+        // Validação final
+        if (!this.validateRegistrationData(userData)) {
+            return;
+        }
+
+        this.showRegisterLoading(true);
+
+        try {
+            // ✅ REALIZAR CADASTRO VIA API DO RENDER
+            const response = await this.performRegistration(userData);
+            
+            if (response.success) {
+                await this.handleSuccessfulRegistration(response.data);
+            } else {
+                Notifications.error(response.error || 'Erro ao criar conta. Tente novamente.');
+            }
+
+        } catch (error) {
+            console.error('Erro no cadastro:', error);
+            Notifications.error('Erro interno. Tente novamente mais tarde.');
+        } finally {
+            this.showRegisterLoading(false);
+        }
+    }
+       // Validar formulário de login
     validateLoginForm(email, password) {
         let isValid = true;
         
@@ -194,43 +341,6 @@ class AuthSystem {
         Notifications.success('Login demo realizado com sucesso! 🎉');
     }
 
-    // Realizar login via API
-    async performLogin(email, password, rememberMe) {
-        // Simulação de API - substitua pela sua implementação real
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // Simular falha para demonstração
-                if (email === 'erro@teste.com') {
-                    resolve({
-                        success: false,
-                        error: 'Credenciais inválidas'
-                    });
-                } else {
-                    // Simular sucesso
-                    resolve({
-                        success: true,
-                        data: {
-                            user: {
-                                id: 'user-' + Date.now(),
-                                name: email.split('@')[0],
-                                email: email,
-                                city: 'São Paulo',
-                                state: 'SP',
-                                totalPoints: 890,
-                                simuladosCompletos: 15,
-                                averageScore: 72.3,
-                                rankingPosition: 284,
-                                currentStreak: 7,
-                                studyTime: 28
-                            },
-                            token: 'jwt-token-' + Date.now()
-                        }
-                    });
-                }
-            }, 1500);
-        });
-    }
-
     // Manipular login bem-sucedido
     async handleSuccessfulLogin(data, rememberMe) {
         const { user, token } = data;
@@ -251,7 +361,7 @@ class AuthSystem {
         Storage.remove('auth_lockout');
 
         // Mostrar sucesso
-        Notifications.success(`Bem-vindo(a), ${user.name}! 🎉`);
+        Notifications.success(`Bem-vindo(a), ${user.name || user.nome}! 🎉`);
 
         // Redirecionar após pequeno delay
         setTimeout(() => {
@@ -290,25 +400,7 @@ class AuthSystem {
             passwordField.focus();
         }
     }
-    // Manipular cadastro
-    async handleRegister(event) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const currentStep = this.getCurrentStep(form);
-        
-        if (currentStep < 3) {
-            // Validar step atual e avançar
-            if (this.validateCurrentStep(currentStep)) {
-                this.nextStep(currentStep);
-            }
-        } else {
-            // Step final - processar cadastro
-            await this.processRegistration(form);
-        }
-    }
-
-    // Obter step atual do formulário
+       // Obter step atual do formulário
     getCurrentStep(form) {
         const visibleStep = form.querySelector('.form-step:not(.d-none)');
         if (visibleStep.id === 'step1') return 1;
@@ -381,47 +473,6 @@ class AuthSystem {
         }
     }
 
-    // Processar cadastro final
-    async processRegistration(form) {
-        const formData = new FormData(form);
-        const userData = {
-            name: formData.get('fullName').trim(),
-            email: formData.get('email').trim().toLowerCase(),
-            password: formData.get('password'),
-            schoolYear: formData.get('schoolYear'),
-            school: formData.get('school')?.trim() || '',
-            targetExam: formData.get('targetExam'),
-            state: formData.get('state'),
-            city: formData.get('city').trim(),
-            agreeTerms: formData.get('agreeTerms') === 'on',
-            agreeEmails: formData.get('agreeEmails') === 'on'
-        };
-
-        // Validação final
-        if (!this.validateRegistrationData(userData)) {
-            return;
-        }
-
-        this.showRegisterLoading(true);
-
-        try {
-            // Realizar cadastro via API
-            const response = await this.performRegistration(userData);
-            
-            if (response.success) {
-                await this.handleSuccessfulRegistration(response.data);
-            } else {
-                Notifications.error(response.error || 'Erro ao criar conta. Tente novamente.');
-            }
-
-        } catch (error) {
-            console.error('Erro no cadastro:', error);
-            Notifications.error('Erro interno. Tente novamente mais tarde.');
-        } finally {
-            this.showRegisterLoading(false);
-        }
-    }
-
     // Validar dados de cadastro
     validateRegistrationData(userData) {
         if (!userData.agreeTerms) {
@@ -447,51 +498,6 @@ class AuthSystem {
         return true;
     }
 
-    // Realizar cadastro via API
-    async performRegistration(userData) {
-        // Simulação de API - substitua pela sua implementação real
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // Simular verificação de email existente
-                if (userData.email === 'existente@teste.com') {
-                    resolve({
-                        success: false,
-                        error: 'Este e-mail já está cadastrado.'
-                    });
-                } else {
-                    // Simular sucesso
-                    const newUser = {
-                        id: 'user-' + Date.now(),
-                        name: userData.name,
-                        email: userData.email,
-                        city: userData.city,
-                        state: userData.state,
-                        school: userData.school,
-                        schoolYear: userData.schoolYear,
-                        targetExam: userData.targetExam,
-                        isAdmin: false,
-                        totalPoints: 0,
-                        simuladosCompletos: 0,
-                        averageScore: 0,
-                        rankingPosition: 0,
-                        currentStreak: 0,
-                        studyTime: 0,
-                        createdAt: new Date().toISOString(),
-                        lastLogin: new Date().toISOString()
-                    };
-
-                    resolve({
-                        success: true,
-                        data: {
-                            user: newUser,
-                            token: 'jwt-token-' + Date.now()
-                        }
-                    });
-                }
-            }, 2000);
-        });
-    }
-
     // Manipular cadastro bem-sucedido
     async handleSuccessfulRegistration(data) {
         const { user, token } = data;
@@ -502,14 +508,14 @@ class AuthSystem {
         User.setCurrentUser(user);
 
         // Mostrar sucesso
-        Notifications.success(`Conta criada com sucesso! Bem-vindo(a), ${user.name}! 🎉`);
+        Notifications.success(`Conta criada com sucesso! Bem-vindo(a), ${user.name || user.nome}! 🎉`);
 
         // Redirecionar
         setTimeout(() => {
             window.location.href = 'dashboard.html';
         }, 2000);
-    }
-    // Validar campo individual
+           }
+       // Validar campo individual
     validateField(field) {
         const value = field.value.trim();
         const fieldType = field.type;
@@ -651,68 +657,6 @@ class AuthSystem {
         }
     }
 
-    // Mostrar mensagem de bloqueio
-    showLockoutMessage(remainingTime) {
-        const minutes = Math.ceil(remainingTime / (1000 * 60));
-        const message = `Muitas tentativas de login incorretas. Tente novamente em ${minutes} minuto${minutes > 1 ? 's' : ''}.`;
-        
-        Notifications.warning(message, 0); // Não remove automaticamente
-        
-        // Desabilitar formulário de login
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            const inputs = loginForm.querySelectorAll('input, button');
-            inputs.forEach(input => {
-                input.disabled = true;
-            });
-        }
-    }
-    // Manipular recuperação de senha
-    async handleForgotPassword() {
-        const emailField = document.getElementById('forgotEmail');
-        const email = emailField?.value.trim();
-        
-        if (!email || !Validation.validateEmail(email)) {
-            Notifications.error('Por favor, insira um e-mail válido.');
-            return;
-        }
-
-        const btn = document.getElementById('sendResetBtn');
-        const spinner = document.getElementById('resetSpinner');
-        
-        // Mostrar loading
-        if (btn && spinner) {
-            btn.disabled = true;
-            spinner.classList.remove('d-none');
-        }
-
-        try {
-            // Simular envio de email de recuperação
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            Notifications.success(`Instruções de recuperação enviadas para ${email}`);
-            
-            // Fechar modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-            if (modal) {
-                modal.hide();
-            }
-            
-            // Limpar campo
-            emailField.value = '';
-            
-        } catch (error) {
-            console.error('Erro ao enviar email de recuperação:', error);
-            Notifications.error('Erro ao enviar email. Tente novamente mais tarde.');
-        } finally {
-            // Esconder loading
-            if (btn && spinner) {
-                btn.disabled = false;
-                spinner.classList.add('d-none');
-            }
-        }
-    }
-
     // Logout do usuário
     logout() {
         // Mostrar confirmação se necessário
@@ -739,92 +683,10 @@ class AuthSystem {
             window.location.href = 'index.html';
         }, 1000);
     }
-
-    // Verificar se token ainda é válido
-    async validateToken() {
-        const token = Storage.get('auth_token');
-        const user = Storage.get('current_user');
-        
-        if (!token || !user) {
-            return false;
-        }
-
-        try {
-            // Aqui você faria uma requisição para validar o token no backend
-            // Por enquanto, vamos simular
-            
-            // Verificar se token não expirou (simulação básica)
-            const tokenData = JSON.parse(atob(token.split('.')[1] || '{}'));
-            const currentTime = Math.floor(Date.now() / 1000);
-            
-            if (tokenData.exp && tokenData.exp < currentTime) {
-                // Token expirado
-                User.clearCurrentUser();
-                return false;
-            }
-
-            return true;
-        } catch (error) {
-            console.error('Erro ao validar token:', error);
-            User.clearCurrentUser();
-            return false;
-        }
-    }
-
-    // Renovar token automaticamente
-    async refreshToken() {
-        const refreshToken = Storage.get('refresh_token');
-        
-        if (!refreshToken) {
-            return false;
-        }
-
-        try {
-            const response = await API.post('/auth/refresh', {
-                refreshToken: refreshToken
-            });
-
-            if (response.success) {
-                Storage.set('auth_token', response.data.token);
-                return true;
-            }
-            
-            return false;
-        } catch (error) {
-            console.error('Erro ao renovar token:', error);
-            return false;
-        }
-    }
 }
 
 // Inicializar sistema de autenticação
 const authSystem = new AuthSystem();
-
-// Funções globais para compatibilidade
-window.login = (email, password, rememberMe = false) => {
-    // Simular evento de submit
-    const event = new Event('submit');
-    const form = document.getElementById('loginForm');
-    
-    if (form) {
-        // Preencher campos
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = password;
-        document.getElementById('rememberMe').checked = rememberMe;
-        
-        authSystem.handleLogin(event);
-    }
-};
-
-window.register = (userData) => {
-    // Implementar se necessário
-    console.log('Registrando usuário:', userData);
-};
-
-window.forgotPassword = (email) => {
-    document.getElementById('forgotEmail').value = email;
-    authSystem.handleForgotPassword();
-};
 
 // Verificar autenticação ao carregar página
 document.addEventListener('DOMContentLoaded', () => {
@@ -848,3 +710,4 @@ document.addEventListener('DOMContentLoaded', () => {
 // Exportar para uso global
 window.AuthSystem = AuthSystem;
 window.authSystem = authSystem;
+           
