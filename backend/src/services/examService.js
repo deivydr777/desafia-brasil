@@ -4,7 +4,7 @@
    ================================== */
 
 const Question = require('../models/Question');
-const { database, collections, FirestoreUtils } = require('../config/database');
+const { database, collections, FirestoreUtils } = require('../../config/database');
 
 class ExamService {
     // Configurações dos tipos de simulados
