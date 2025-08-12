@@ -3,7 +3,7 @@
    Modelo para Firebase Firestore
    ================================== */
 
-const { database, collections, FirestoreUtils } = require('../config/database');
+const { database, collections, FirestoreUtils } = require('../../config/database');
 
 class Question {
     constructor(data) {
