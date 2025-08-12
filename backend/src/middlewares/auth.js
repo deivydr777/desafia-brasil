@@ -4,7 +4,7 @@
    ================================== */
 
 const jwt = require('jsonwebtoken');
-const { database, collections } = require('../config/database');
+const { database, collections } = require('../../config/database');
 
 // Middleware de autenticação
 const authenticateToken = async (req, res, next) => {
