@@ -59,7 +59,8 @@ const registerUser = async (req, res) => {
                 requiredLength: 6
             });
         }
-               // Verificar se email já existe
+
+        // Verificar se email já existe
         const existingUsers = await database.find('users', { 
             email: email.toLowerCase() 
         });
@@ -74,8 +75,9 @@ const registerUser = async (req, res) => {
                     forgotPassword: 'POST /api/auth/forgot-password'
                 }
             });
-    }
-               // Hash da senha
+        }
+
+        // Hash da senha
         const saltRounds = 12;
         const hashedPassword = await bcrypt.hash(senha, saltRounds);
 
@@ -109,8 +111,9 @@ const registerUser = async (req, res) => {
                 message: 'Erro ao criar usuário',
                 suggestion: 'Tente novamente em alguns instantes'
             });
-               }
-               // Gerar token JWT
+        }
+
+        // Gerar token JWT
         const token = generateToken(newUser.id);
 
         // Resposta de sucesso
@@ -135,11 +138,6 @@ const registerUser = async (req, res) => {
                 type: 'Bearer',
                 expiresIn: JWT_EXPIRES_IN,
                 usage: 'Authorization: Bearer <token>'
-            },
-            onboarding: {
-                nextStep: 'Explore os simulados disponíveis',
-                suggestedAction: 'Fazer primeiro simulado',
-                welcomeMessage: 'Sua jornada educacional começa agora!'
             }
         });
 
@@ -180,8 +178,7 @@ const loginUser = async (req, res) => {
                 message: 'Email não encontrado',
                 suggestion: 'Verifique o email ou faça seu cadastro',
                 actions: {
-                    register: 'POST /api/auth/register',
-                    forgotPassword: 'POST /api/auth/forgot-password'
+                    register: 'POST /api/auth/register'
                 }
             });
         }
@@ -193,20 +190,17 @@ const loginUser = async (req, res) => {
             return res.status(403).json({
                 success: false,
                 message: 'Conta bloqueada ou desativada',
-                suggestion: 'Entre em contato com o suporte',
-                support: 'contato@desafiabrasil.com'
+                suggestion: 'Entre em contato com o suporte'
             });
         }
-               // Verificar senha
+
+        // Verificar senha
         const senhaValida = await bcrypt.compare(senha, user.senha);
         if (!senhaValida) {
             return res.status(401).json({
                 success: false,
                 message: 'Senha incorreta',
-                suggestion: 'Verifique sua senha ou use "Esqueci minha senha"',
-                actions: {
-                    forgotPassword: 'POST /api/auth/forgot-password'
-                }
+                suggestion: 'Verifique sua senha ou use "Esqueci minha senha"'
             });
         }
 
@@ -218,10 +212,7 @@ const loginUser = async (req, res) => {
         // Gerar token
         const token = generateToken(user.id);
 
-        // Buscar estatísticas rápidas
-        const totalQuestions = await database.count('questions', { ativa: true });
-        const totalUsers = await database.count('users', { ativo: true });
-               // Resposta de sucesso
+        // Resposta de sucesso
         res.json({
             success: true,
             message: `🎉 Bem-vindo de volta, ${user.nome}!`,
@@ -236,29 +227,9 @@ const loginUser = async (req, res) => {
                 tipo: user.tipo,
                 pontuacaoTotal: user.pontuacaoTotal || 0,
                 simuladosRealizados: user.simuladosRealizados || 0,
-                medalhas: user.medalhas || [],
-                emailVerificado: user.emailVerificado,
-                avatar: user.avatar
+                medalhas: user.medalhas || []
             },
-            token,
-            tokenInfo: {
-                type: 'Bearer',
-                expiresIn: JWT_EXPIRES_IN,
-                usage: 'Authorization: Bearer <token>'
-            },
-            dashboard: {
-                simuladosRealizados: user.simuladosRealizados || 0,
-                pontuacaoTotal: user.pontuacaoTotal || 0,
-                proximoObjetivo: (user.simuladosRealizados || 0) < 5 ? 
-                    'Complete 5 simulados para destravar medalhas' : 
-                    'Continue mantendo sua boa performance!',
-                recomendacao: 'Faça um simulado para melhorar sua posição no ranking'
-            },
-            platform: {
-                questoesDisponiveis: totalQuestions,
-                estudantesAtivos: totalUsers,
-                rankingPosicao: 'Calculando...'
-            }
+            token
         });
 
     } catch (error) {
@@ -270,7 +241,7 @@ const loginUser = async (req, res) => {
         });
     }
 };
-// 3. OBTER PERFIL DO USUÁRIO
+ // 3. OBTER PERFIL DO USUÁRIO
 const getUserProfile = async (req, res) => {
     try {
         // Buscar usuário por ID
@@ -283,17 +254,10 @@ const getUserProfile = async (req, res) => {
             });
         }
 
-        // Calcular posição no ranking
+        // Calcular estatísticas
         const allUsers = await database.find('users', { ativo: true });
-        const usersRanked = allUsers
-            .sort((a, b) => (b.pontuacaoTotal || 0) - (a.pontuacaoTotal || 0));
-        
+        const usersRanked = allUsers.sort((a, b) => (b.pontuacaoTotal || 0) - (a.pontuacaoTotal || 0));
         const posicaoRanking = usersRanked.findIndex(u => u.id === user.id) + 1;
-        const totalUsers = usersRanked.length;
-
-        // Estatísticas da plataforma
-        const totalQuestions = await database.count('questions', { ativa: true });
-        const totalExams = allUsers.reduce((sum, u) => sum + (u.simuladosRealizados || 0), 0);
 
         res.json({
             success: true,
@@ -306,41 +270,10 @@ const getUserProfile = async (req, res) => {
                 serie: user.serie,
                 cidade: user.cidade,
                 estado: user.estado,
-                tipo: user.tipo,
                 pontuacaoTotal: user.pontuacaoTotal || 0,
                 simuladosRealizados: user.simuladosRealizados || 0,
                 medalhas: user.medalhas || [],
-                materiasFavoritas: user.materiasFavoritas || [],
-                nivelDificuldade: user.nivelDificuldade || 'Médio',
-                emailVerificado: user.emailVerificado,
-                avatar: user.avatar,
-                membroDesde: user.createdAt,
-                ultimoLogin: user.ultimoLogin
-            },
-            statistics: {
-                ranking: {
-                    posicao: posicaoRanking,
-                    totalUsuarios: totalUsers,
-                    percentil: totalUsers > 0 ? 
-                        Math.round(((totalUsers - posicaoRanking) / totalUsers) * 100) : 0,
-                    classificacao: posicaoRanking <= 10 ? 'Top 10 Nacional' :
-                                  posicaoRanking <= 100 ? 'Top 100 Nacional' :
-                                  posicaoRanking <= 1000 ? 'Top 1000 Nacional' : 'Em crescimento'
-                },
-                performance: {
-                    simuladosRealizados: user.simuladosRealizados || 0,
-                    pontuacaoTotal: user.pontuacaoTotal || 0,
-                    mediaGeral: (user.simuladosRealizados || 0) > 0 ? 
-                        Math.round((user.pontuacaoTotal || 0) / user.simuladosRealizados) : 0,
-                    medalhasConquistadas: (user.medalhas || []).length,
-                    proximaMeta: (user.simuladosRealizados || 0) < 10 ? 
-                        'Complete 10 simulados' : 'Mantenha a consistência'
-                },
-                plataforma: {
-                    questoesDisponiveis: totalQuestions,
-                    totalSimuladosPlataforma: totalExams,
-                    posicaoGlobal: posicaoRanking
-                }
+                posicaoRanking
             }
         });
 
