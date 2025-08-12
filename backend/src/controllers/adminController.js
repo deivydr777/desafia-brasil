@@ -494,4 +494,251 @@ const createQuestion = async (req, res) => {
         if (missingFields.length > 0) {
             return res.status(400).json({
                 success: false,
-                message: 'Campos obrigatórios aus
+                message: 'Campos obrigatórios ausentes',
+                missingFields,
+                example: {
+                    titulo: "Questão de Matemática Básica",
+                    enunciado: "Qual é o resultado de 2 + 2?",
+                    alternativas: [
+                        { letra: 'A', texto: '3' },
+                        { letra: 'B', texto: '4' },
+                        { letra: 'C', texto: '5' },
+                        { letra: 'D', texto: '6' }
+                    ],
+                    respostaCorreta: 'B',
+                    materia: 'Matemática',
+                    assunto: 'Operações Básicas',
+                    dificuldade: 'Fácil'
+                }
+            });
+        }
+
+        // Criar objeto Question
+        const newQuestion = new Question({
+            titulo,
+            enunciado,
+            alternativas,
+            respostaCorreta,
+            materia,
+            assunto,
+            dificuldade,
+            fonte: fonte || {},
+            explicacao: explicacao || '',
+            tags: tags || [],
+            criadaPor: req.userId,
+            aprovada: adminUser.tipo === 'admin', // Admin aprova automaticamente
+            ativa: adminUser.tipo === 'admin'
+        });
+
+        // Salvar no banco
+        const savedQuestion = await newQuestion.save();
+
+        res.status(201).json({
+            success: true,
+            message: '🎯 Questão criada com sucesso!',
+            question: {
+                id: savedQuestion.id,
+                codigo: savedQuestion.codigo,
+                titulo: savedQuestion.titulo,
+                materia: savedQuestion.materia,
+                assunto: savedQuestion.assunto,
+                dificuldade: savedQuestion.dificuldade,
+                status: savedQuestion.aprovada ? 'Aprovada e Ativa' : 'Pendente de Aprovação',
+                criadaPor: adminUser.nome
+            },
+            nextSteps: adminUser.tipo === 'admin' ? 
+                ['Questão já está ativa e disponível para simulados'] :
+                ['Questão criada e enviada para aprovação do administrador']
+        });
+
+    } catch (error) {
+        console.error('Erro ao criar questão:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro interno do servidor',
+            error: error.message
+        });
+    }
+};
+// 5. RELATÓRIOS E ESTATÍSTICAS AVANÇADAS
+const getAdvancedReports = async (req, res) => {
+    try {
+        const { type, startDate, endDate, format = 'json' } = req.query;
+
+        // Verificar permissão de admin
+        const adminUser = await User.findById(req.userId);
+        if (!adminUser || adminUser.tipo !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Acesso negado - Apenas administradores'
+            });
+        }
+
+        let report = {};
+        const now = new Date();
+        switch (type) {
+            case 'users':
+                // Relatório de usuários
+                const userStats = await User.getStats();
+                const recentUsers = await User.getActiveUsers(30); // últimos 30 dias
+                
+                report = {
+                    type: 'Relatório de Usuários',
+                    period: { startDate, endDate },
+                    overview: userStats.overview,
+                    breakdown: {
+                        byState: userStats.byState,
+                        bySerie: userStats.bySerie,
+                        recentActivity: {
+                            last30Days: recentUsers.length,
+                            growthRate: userStats.overview.totalUsers > 0 ? 
+                                Math.round((recentUsers.length / userStats.overview.totalUsers) * 100) : 0
+                        }
+                    },
+                    insights: [
+                        `Total de ${userStats.overview.totalUsers} usuários cadastrados`,
+                        `${userStats.overview.activeUsers} usuários ativos`,
+                        `Pontuação média: ${userStats.overview.averageScore} pontos`,
+                        `Estado com mais usuários: ${userStats.byState[0]?.estado || 'N/A'}`
+                    ]
+                };
+                break;
+            case 'questions':
+                // Relatório de questões
+                const questionStats = await Question.getStats();
+                
+                report = {
+                    type: 'Relatório de Questões',
+                    period: { startDate, endDate },
+                    overview: questionStats.overview,
+                    breakdown: {
+                        bySubject: questionStats.bySubject,
+                        byDifficulty: questionStats.byDifficulty,
+                        performance: {
+                            mostAnswered: questionStats.bySubject
+                                .sort((a, b) => b.vezesRespondida - a.vezesRespondida)
+                                .slice(0, 3),
+                            highestAccuracy: questionStats.bySubject
+                                .sort((a, b) => b.accuracy - a.accuracy)
+                                .slice(0, 3)
+                        }
+                    },
+                    insights: [
+                        `Total de ${questionStats.overview.totalQuestions} questões`,
+                        `${questionStats.overview.activeQuestions} questões ativas`,
+                        `Taxa geral de acerto: ${questionStats.overview.overallAccuracy}%`,
+                        `Matéria com mais questões: ${questionStats.bySubject[0]?.materia || 'N/A'}`
+                    ]
+                };
+                break;
+            case 'performance':
+                // Relatório de performance da plataforma
+                const platformStats = await User.getStats();
+                const questionPerformance = await Question.getStats();
+                
+                report = {
+                    type: 'Relatório de Performance da Plataforma',
+                    period: { startDate, endDate },
+                    metrics: {
+                        engagement: {
+                            totalExams: platformStats.overview.totalExams,
+                            averageExamsPerUser: platformStats.overview.averageExams,
+                            totalAnswers: questionPerformance.overview.totalAnswered,
+                            overallAccuracy: questionPerformance.overview.overallAccuracy
+                        },
+                        growth: {
+                            totalUsers: platformStats.overview.totalUsers,
+                            activeUsers: platformStats.overview.activeUsers,
+                            activityRate: platformStats.overview.totalUsers > 0 ? 
+                                Math.round((platformStats.overview.activeUsers / platformStats.overview.totalUsers) * 100) : 0
+                        },
+                        content: {
+                            totalQuestions: questionPerformance.overview.totalQuestions,
+                            approvedQuestions: questionPerformance.overview.approvedQuestions,
+                            approvalRate: questionPerformance.overview.totalQuestions > 0 ? 
+                                Math.round((questionPerformance.overview.approvedQuestions / questionPerformance.overview.totalQuestions) * 100) : 0
+                        }
+                    },
+                    recommendations: [
+                        'Incentivar mais participação de usuários inativos',
+                        'Criar mais questões para matérias com menor cobertura',
+                        'Implementar sistema de gamificação para aumentar engajamento',
+                        'Analisar questões com baixa taxa de acerto para melhorias'
+                    ]
+                };
+                break;
+            case 'engagement':
+                // Relatório de engajamento
+                const allUsers = await User.find({ ativo: true });
+                const allQuestions = await Question.find({ ativa: true });
+                
+                // Calcular métricas de engajamento
+                const activeThisWeek = await User.getActiveUsers(7);
+                const totalSimulados = allUsers.reduce((sum, user) => sum + (user.simuladosRealizados || 0), 0);
+                const usersWithSimulados = allUsers.filter(user => (user.simuladosRealizados || 0) > 0);
+                
+                report = {
+                    type: 'Relatório de Engajamento',
+                    period: { startDate, endDate },
+                    engagement: {
+                        weeklyActiveUsers: activeThisWeek.length,
+                        totalSimulados,
+                        usersWithActivity: usersWithSimulados.length,
+                        activityRate: allUsers.length > 0 ? 
+                            Math.round((usersWithSimulados.length / allUsers.length) * 100) : 0,
+                        averageSimuladosPerActiveUser: usersWithSimulados.length > 0 ? 
+                            Math.round(totalSimulados / usersWithSimulados.length) : 0
+                    },
+                    topPerformers: allUsers
+                        .sort((a, b) => (b.pontuacaoTotal || 0) - (a.pontuacaoTotal || 0))
+                        .slice(0, 10)
+                        .map((user, index) => ({
+                            posicao: index + 1,
+                            nome: user.nome,
+                            pontuacao: user.pontuacaoTotal || 0,
+                            simulados: user.simuladosRealizados || 0
+                        })),
+                    insights: [
+                        `${activeThisWeek.length} usuários ativos esta semana`,
+                        `${usersWithSimulados.length} usuários já fizeram simulados`,
+                        `Média de ${Math.round(totalSimulados / (usersWithSimulados.length || 1))} simulados por usuário ativo`,
+                        `Taxa de engajamento: ${Math.round((usersWithSimulados.length / allUsers.length) * 100)}%`
+                    ]
+                };
+                break;
+            default:
+                return res.status(400).json({
+                    success: false,
+                    message: 'Tipo de relatório inválido',
+                    availableTypes: ['users', 'questions', 'performance', 'engagement'],
+                    examples: {
+                        users: '/api/admin/reports?type=users',
+                        questions: '/api/admin/reports?type=questions&startDate=2024-01-01',
+                        performance: '/api/admin/reports?type=performance',
+                        engagement: '/api/admin/reports?type=engagement'
+                    }
+                });
+        }
+        res.json({
+            success: true,
+            message: '📊 Relatório gerado com sucesso',
+            report,
+            metadata: {
+                generatedAt: now,
+                generatedBy: adminUser.nome,
+                reportType: type,
+                format,
+                dataSource: 'Firebase Firestore',
+                version: '2.0.0'
+            }
+        });
+
+    } catch (error) {
+        console.error('Erro ao gerar relatório:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erro interno do servidor',
+            error: error.message
+        });
+    }
+};
