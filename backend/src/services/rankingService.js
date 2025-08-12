@@ -3,7 +3,7 @@
    Serviço para cálculo de rankings
    ================================== */
 
-const { database, collections, FirestoreUtils } = require('../config/database');
+const { database, collections, FirestoreUtils } = require('../../config/database');
 
 class RankingService {
     // Calcular ranking geral
