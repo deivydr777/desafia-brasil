@@ -59,7 +59,7 @@ const registerUser = async (req, res) => {
                 requiredLength: 6
             });
         }
-        // Verificar se email já existe
+               // Verificar se email já existe
         const existingUsers = await database.find('users', { 
             email: email.toLowerCase() 
         });
@@ -74,8 +74,8 @@ const registerUser = async (req, res) => {
                     forgotPassword: 'POST /api/auth/forgot-password'
                 }
             });
-        }
-        // Hash da senha
+    }
+               // Hash da senha
         const saltRounds = 12;
         const hashedPassword = await bcrypt.hash(senha, saltRounds);
 
@@ -109,8 +109,8 @@ const registerUser = async (req, res) => {
                 message: 'Erro ao criar usuário',
                 suggestion: 'Tente novamente em alguns instantes'
             });
-        }
-        // Gerar token JWT
+               }
+               // Gerar token JWT
         const token = generateToken(newUser.id);
 
         // Resposta de sucesso
@@ -197,7 +197,7 @@ const loginUser = async (req, res) => {
                 support: 'contato@desafiabrasil.com'
             });
         }
-        // Verificar senha
+               // Verificar senha
         const senhaValida = await bcrypt.compare(senha, user.senha);
         if (!senhaValida) {
             return res.status(401).json({
@@ -221,7 +221,7 @@ const loginUser = async (req, res) => {
         // Buscar estatísticas rápidas
         const totalQuestions = await database.count('questions', { ativa: true });
         const totalUsers = await database.count('users', { ativo: true });
-        // Resposta de sucesso
+               // Resposta de sucesso
         res.json({
             success: true,
             message: `🎉 Bem-vindo de volta, ${user.nome}!`,
