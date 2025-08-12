@@ -13,6 +13,71 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- CSS Principal -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* ✅ ESTILOS APRIMORADOS PARA VALIDAÇÃO INTELIGENTE */
+        .form-control.is-valid {
+            border-color: #28a745;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.8.8 3.8-3.8-.8-.8-3 3-1.4-1.4-.8.8z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6l1.4 1.4-1.4 1.4'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        .password-strength {
+            transition: all 0.3s ease;
+        }
+
+        .progress-bar.bg-danger {
+            background-color: #dc3545 !important;
+        }
+
+        .progress-bar.bg-warning {
+            background-color: #ffc107 !important;
+        }
+
+        .progress-bar.bg-info {
+            background-color: #0dcaf0 !important;
+        }
+
+        .progress-bar.bg-success {
+            background-color: #28a745 !important;
+        }
+
+        .form-step {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .auth-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .input-group .btn {
+            border-color: var(--bs-border-color);
+        }
+
+        .invalid-feedback, .valid-feedback {
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <!-- Navbar Simples -->
@@ -72,6 +137,9 @@
                                         <div class="invalid-feedback">
                                             Por favor, insira seu nome completo.
                                         </div>
+                                        <div class="valid-feedback">
+                                            Ótimo! Nome válido.
+                                        </div>
                                     </div>
                                 </div>
 
@@ -85,6 +153,9 @@
                                                placeholder="seu@email.com" required>
                                         <div class="invalid-feedback">
                                             Por favor, insira um e-mail válido.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            E-mail válido!
                                         </div>
                                     </div>
                                 </div>
@@ -102,6 +173,9 @@
                                         </button>
                                         <div class="invalid-feedback">
                                             A senha deve ter pelo menos 6 caracteres.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Senha forte!
                                         </div>
                                     </div>
                                     <!-- Password Strength Indicator -->
@@ -123,6 +197,9 @@
                                                placeholder="Digite a senha novamente" required>
                                         <div class="invalid-feedback">
                                             As senhas não coincidem.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Senhas coincidem!
                                         </div>
                                     </div>
                                 </div>
@@ -152,6 +229,9 @@
                                     <div class="invalid-feedback">
                                         Por favor, selecione seu ano escolar.
                                     </div>
+                                    <div class="valid-feedback">
+                                        Perfeito!
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
@@ -179,6 +259,9 @@
                                     </select>
                                     <div class="invalid-feedback">
                                         Por favor, selecione seu vestibular alvo.
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Excelente escolha!
                                     </div>
                                 </div>
 
@@ -238,6 +321,9 @@
                                     <div class="invalid-feedback">
                                         Por favor, selecione seu estado.
                                     </div>
+                                    <div class="valid-feedback">
+                                        Estado selecionado!
+                                    </div>
                                 </div>
 
                                 <div class="mb-4">
@@ -250,6 +336,9 @@
                                                placeholder="Digite sua cidade" required>
                                         <div class="invalid-feedback">
                                             Por favor, digite sua cidade.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Cidade válida!
                                         </div>
                                     </div>
                                 </div>
@@ -269,71 +358,4 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="agreeEmails">
-                                        <label class="form-check-label small" for="agreeEmails">
-                                            Quero receber dicas de estudo e novidades por e-mail
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-outline-secondary w-100" id="backStep2">
-                                            <i class="fas fa-arrow-left me-2"></i>Voltar
-                                        </button>
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="submit" class="btn btn-success w-100" id="registerBtn">
-                                            <span class="spinner-border spinner-border-sm d-none me-2" id="registerSpinner"></span>
-                                            <i class="fas fa-check me-2"></i>Criar Conta
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-
-                        <!-- Login Link -->
-                        <div class="text-center mt-4 pt-3 border-top">
-                            <p class="text-muted mb-2">Já tem uma conta?</p>
-                            <a href="login.html" class="btn btn-outline-primary">
-                                <i class="fas fa-sign-in-alt me-2"></i>
-                                Fazer login
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal Termos de Uso -->
-    <div class="modal fade" id="termsModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Termos de Uso</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <h6>1. Aceitação dos Termos</h6>
-                    <p>Ao utilizar o Desafia Brasil, você concorda com estes termos de uso.</p>
-                    
-                    <h6>2. Uso da Plataforma</h6>
-                    <p>A plataforma é gratuita para uso educacional. É proibido o uso comercial sem autorização.</p>
-                    
-                    <h6>3. Responsabilidades do Usuário</h6>
-                    <p>Você é responsável pela veracidade das informações fornecidas e pelo uso adequado da plataforma.</p>
-                    
-                    <h6>4. Propriedade Intelectual</h6>
-                    <p>Todo o conteúdo da plataforma é protegido por direitos autorais.</p>
-                    
-                    <h6>5. Modificações</h6>
-                    <p>Reservamos o direito de modificar estes termos a qualquer momento.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
-                </div>
-            </div>
-        </div>
-    </di
+                
