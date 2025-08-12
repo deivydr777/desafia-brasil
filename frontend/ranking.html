@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranking - Desafia Brasil</title>
+    <!-- =============================================== -->
+<!-- == SCRIPT DE VERIFICAÇÃO DE LOGIN (SEGURANÇA) == -->
+<script>
+    const userToken = localStorage.getItem('userToken');
+    if (!userToken) {
+        // Se NÃO encontrou o token, chuta o usuário para a página de login
+        window.location.href = 'login.html';
+    }
+</script>
+<!-- =============================================== -->
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
