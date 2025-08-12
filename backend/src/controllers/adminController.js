@@ -1,10 +1,12 @@
 /* ===================================
    DESAFIA BRASIL - ADMIN CONTROLLER
    Sistema completo de administração
+   Versão Firebase Firestore
    ================================== */
 
-const Question = require('../models/Question');
+const { database, collections, FirestoreUtils } = require('../config/database');
 const User = require('../models/User');
+const Question = require('../models/Question');
 
 // 1. DASHBOARD ADMINISTRATIVO COMPLETO
 const getAdminDashboard = async (req, res) => {
@@ -14,99 +16,88 @@ const getAdminDashboard = async (req, res) => {
         if (!adminUser || adminUser.tipo !== 'admin') {
             return res.status(403).json({
                 success: false,
-                message: 'Acesso negado - Apenas administradores'
+                message: 'Acesso negado - Apenas administradores',
+                requiredRole: 'admin',
+                userRole: adminUser?.tipo || 'guest'
             });
         }
 
-        // Estatísticas gerais da plataforma
-        const totalUsers = await User.countDocuments();
-        const totalQuestions = await Question.countDocuments();
-        const activeUsers = await User.countDocuments({ 
-            ultimoLogin: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } 
-        });
-        const pendingQuestions = await Question.countDocuments({ aprovada: false });
-
-        // Usuários por estado (top 10)
-        const usersByState = await User.aggregate([
-            { $match: { ativo: true, estado: { $exists: true, $ne: null } } },
-            { $group: { _id: '$estado', count: { $sum: 1 } } },
-            { $sort: { count: -1 } },
-            { $limit: 10 }
-        ]);
-
-        // Questões por matéria
-        const questionsBySubject = await Question.aggregate([
-            { $match: { ativa: true } },
-            { $group: { _id: '$materia', count: { $sum: 1 } } },
-            { $sort: { count: -1 } }
-        ]);
-
-        // Questões por dificuldade
-        const questionsByDifficulty = await Question.aggregate([
-            { $match: { ativa: true } },
-            { $group: { _id: '$dificuldade', count: { $sum: 1 } } }
-        ]);
+        // Estatísticas dos usuários
+        const userStats = await User.getStats();
+        
+        // Estatísticas das questões
+        const questionStats = await Question.getStats();
 
         // Top 10 estudantes
-        const topStudents = await User.find({ ativo: true })
-            .sort({ pontuacaoTotal: -1 })
-            .limit(10)
-            .select('nome email escola pontuacaoTotal simuladosRealizados criadoEm');
+        const topStudents = await User.getRanking({}, 10);
 
         // Usuários recentes (últimos 7 dias)
-        const recentUsers = await User.find({
-            criadoEm: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
-        }).countDocuments();
+        const recentUsers = await User.getActiveUsers(7);
 
         // Questões mais respondidas
-        const popularQuestions = await Question.find({ ativa: true })
-            .sort({ vezesRespondida: -1 })
-            .limit(5)
-            .select('codigo titulo materia vezesRespondida percentualAcerto');
+        const allQuestions = await Question.find({ ativa: true }, {
+            orderBy: { field: 'vezesRespondida', direction: 'desc' },
+            limit: 5
+        });
+
+        // Questões pendentes de aprovação
+        const pendingQuestions = await Question.count({ aprovada: false });
 
         res.json({
             success: true,
             message: '📊 Dashboard administrativo do Desafia Brasil',
             dashboard: {
                 overview: {
-                    totalUsers,
-                    totalQuestions,
-                    activeUsers,
-                    pendingQuestions,
-                    recentUsers,
-                    growthRate: totalUsers > 0 ? Math.round((recentUsers / totalUsers) * 100) : 0
+                    totalUsers: userStats.overview.totalUsers,
+                    activeUsers: userStats.overview.activeUsers,
+                    verifiedUsers: userStats.overview.verifiedUsers,
+                    totalQuestions: questionStats.overview.totalQuestions,
+                    activeQuestions: questionStats.overview.activeQuestions,
+                    pendingQuestions: pendingQuestions,
+                    totalExams: userStats.overview.totalExams,
+                    averageScore: userStats.overview.averageScore,
+                    recentActivity: recentUsers.length,
+                    overallAccuracy: questionStats.overview.overallAccuracy
                 },
                 distribution: {
-                    usersByState: usersByState.map(item => ({
-                        estado: item._id,
-                        usuarios: item.count
+                    usersByState: userStats.byState.slice(0, 10),
+                    usersBySerie: userStats.bySerie,
+                    questionsBySubject: questionStats.bySubject.map(item => ({
+                        materia: item.materia,
+                        total: item.total,
+                        ativas: item.ativas,
+                        accuracy: item.accuracy
                     })),
-                    questionsBySubject: questionsBySubject.map(item => ({
-                        materia: item._id,
-                        questoes: item.count
-                    })),
-                    questionsByDifficulty: questionsByDifficulty.map(item => ({
-                        dificuldade: item._id,
-                        questoes: item.count
-                    }))
+                    questionsByDifficulty: questionStats.byDifficulty
                 },
-                topPerformers: topStudents.map((user, index) => ({
+                topPerformers: topStudents.slice(0, 10).map((user, index) => ({
                     posicao: index + 1,
+                    id: user.id,
                     nome: user.nome,
                     email: user.email,
                     escola: user.escola,
+                    estado: user.estado,
                     pontuacao: user.pontuacaoTotal,
                     simulados: user.simuladosRealizados,
-                    membro_desde: user.criadoEm
+                    mediaGeral: user.mediaGeral
                 })),
-                popularContent: popularQuestions.map(q => ({
+                popularContent: allQuestions.map(q => ({
+                    id: q.id,
                     codigo: q.codigo,
                     titulo: q.titulo,
                     materia: q.materia,
                     vezesRespondida: q.vezesRespondida,
-                    percentualAcerto: q.percentualAcerto
-                }))
-            }
+                    percentualAcerto: q.percentualAcerto,
+                    dificuldade: q.dificuldade
+                })),
+                recentActivity: {
+                    newUsers7days: recentUsers.length,
+                    pendingApprovals: pendingQuestions,
+                    totalAnswered: questionStats.overview.totalAnswered
+                }
+            },
+            timestamp: new Date(),
+            generatedBy: adminUser.nome
         });
 
     } catch (error) {
@@ -123,7 +114,7 @@ const getAdminDashboard = async (req, res) => {
 const manageUsers = async (req, res) => {
     try {
         const { action, userId, userData } = req.body;
-        const { page = 1, limit = 20, search, estado, serie } = req.query;
+        const { page = 1, limit = 20, search, estado, serie, tipo } = req.query;
 
         // Verificar permissão de admin
         const adminUser = await User.findById(req.userId);
@@ -134,89 +125,143 @@ const manageUsers = async (req, res) => {
             });
         }
 
-        // Construir filtros
-        const filters = {};
-        if (search) {
-            filters.$or = [
-                { nome: { $regex: search, $options: 'i' } },
-                { email: { $regex: search, $options: 'i' } },
-                { escola: { $regex: search, $options: 'i' } }
-            ];
-        }
-        if (estado) filters.estado = estado;
-        if (serie) filters.serie = serie;
-
         // Ações específicas
-        if (action) {
+        if (action && userId) {
             switch (action) {
                 case 'block':
-                    await User.findByIdAndUpdate(userId, { ativo: false });
+                    const blockedUser = await database.update(collections.USERS, userId, { ativo: false });
                     return res.json({
                         success: true,
-                        message: '🚫 Usuário bloqueado com sucesso'
+                        message: '🚫 Usuário bloqueado com sucesso',
+                        user: blockedUser
                     });
 
                 case 'unblock':
-                    await User.findByIdAndUpdate(userId, { ativo: true });
+                    const unblockedUser = await database.update(collections.USERS, userId, { ativo: true });
                     return res.json({
                         success: true,
-                        message: '✅ Usuário desbloqueado com sucesso'
+                        message: '✅ Usuário desbloqueado com sucesso',
+                        user: unblockedUser
                     });
 
                 case 'promote':
-                    await User.findByIdAndUpdate(userId, { tipo: 'professor' });
+                    const promotedUser = await User.promoteUser(userId, userData.novoTipo || 'professor');
                     return res.json({
                         success: true,
-                        message: '⬆️ Usuário promovido a professor'
+                        message: `⬆️ Usuário promovido para ${userData.novoTipo || 'professor'}`,
+                        user: promotedUser.dadosPublicos()
                     });
 
                 case 'update':
-                    await User.findByIdAndUpdate(userId, userData);
+                    const updatedUser = await database.update(collections.USERS, userId, userData);
                     return res.json({
                         success: true,
-                        message: '✏️ Usuário atualizado com sucesso'
+                        message: '✏️ Usuário atualizado com sucesso',
+                        user: updatedUser
                     });
 
                 case 'delete':
-                    await User.findByIdAndDelete(userId);
+                    const deleted = await User.delete(userId);
+                    if (deleted) {
+                        return res.json({
+                            success: true,
+                            message: '🗑️ Usuário removido com sucesso'
+                        });
+                    } else {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Erro ao remover usuário'
+                        });
+                    }
+
+                case 'verify':
+                    const verifiedUser = await database.update(collections.USERS, userId, { emailVerificado: true });
                     return res.json({
                         success: true,
-                        message: '🗑️ Usuário removido com sucesso'
+                        message: '✅ Email verificado com sucesso',
+                        user: verifiedUser
+                    });
+
+                default:
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Ação inválida',
+                        availableActions: ['block', 'unblock', 'promote', 'update', 'delete', 'verify']
                     });
             }
         }
 
-        // Listar usuários com paginação
-        const users = await User.find(filters)
-            .sort({ criadoEm: -1 })
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .select('nome email escola serie cidade estado pontuacaoTotal simuladosRealizados ativo tipo ultimoLogin criadoEm');
+        // Construir filtros para busca
+        const filters = {};
+        if (estado) filters.estado = estado;
+        if (serie) filters.serie = serie;
+        if (tipo) filters.tipo = tipo;
 
-        const totalUsers = await User.countDocuments(filters);
+        // Busca por texto (simulação - no Firebase seria necessário usar Algolia ou similar)
+        let users = [];
+        if (search) {
+            // Buscar por nome, email ou escola (busca simples)
+            const allUsers = await User.find(filters);
+            users = allUsers.filter(user => 
+                user.nome.toLowerCase().includes(search.toLowerCase()) ||
+                user.email.toLowerCase().includes(search.toLowerCase()) ||
+                (user.escola && user.escola.toLowerCase().includes(search.toLowerCase()))
+            );
+        } else {
+            // Busca com paginação
+            const paginationResult = await User.paginate(filters, {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                orderBy: { field: 'createdAt', direction: 'desc' }
+            });
+            users = paginationResult.data;
+        }
+
+        // Formatar dados para resposta
+        const usersFormatted = users.map(user => ({
+            id: user.id,
+            nome: user.nome,
+            email: user.email,
+            escola: user.escola,
+            serie: user.serie,
+            localizacao: `${user.cidade || 'N/A'}, ${user.estado || 'N/A'}`,
+            pontuacao: user.pontuacaoTotal,
+            simulados: user.simuladosRealizados,
+            medalhas: user.medalhas?.length || 0,
+            status: user.ativo ? 'Ativo' : 'Bloqueado',
+            emailVerificado: user.emailVerificado,
+            tipo: user.tipo,
+            ultimoLogin: user.ultimoLogin,
+            membro_desde: user.criadoEm,
+            mediaGeral: user.mediaAcertos
+        }));
+
+        const totalUsers = search ? users.length : await User.count(filters);
 
         res.json({
             success: true,
-            users: users.map(user => ({
-                id: user._id,
-                nome: user.nome,
-                email: user.email,
-                escola: user.escola,
-                serie: user.serie,
-                localizacao: `${user.cidade || 'N/A'}, ${user.estado || 'N/A'}`,
-                pontuacao: user.pontuacaoTotal,
-                simulados: user.simuladosRealizados,
-                status: user.ativo ? 'Ativo' : 'Bloqueado',
-                tipo: user.tipo,
-                ultimoLogin: user.ultimoLogin,
-                membro_desde: user.criadoEm
-            })),
+            message: `👥 ${usersFormatted.length} usuários encontrados`,
+            users: usersFormatted,
             pagination: {
                 currentPage: parseInt(page),
                 totalPages: Math.ceil(totalUsers / limit),
                 totalUsers,
                 hasNext: page * limit < totalUsers,
-                hasPrevious: page > 1
+                hasPrevious: page > 1,
+                resultsPerPage: parseInt(limit)
+            },
+            filters: {
+                search: search || null,
+                estado: estado || 'Todos',
+                serie: serie || 'Todas',
+                tipo: tipo || 'Todos'
+            },
+            statistics: {
+                totalActive: usersFormatted.filter(u => u.status === 'Ativo').length,
+                totalBlocked: usersFormatted.filter(u => u.status === 'Bloqueado').length,
+                totalVerified: usersFormatted.filter(u => u.emailVerificado).length,
+                averageScore: usersFormatted.length > 0 ? 
+                    Math.round(usersFormatted.reduce((sum, u) => sum + u.pontuacao, 0) / usersFormatted.length) : 0
             }
         });
 
@@ -234,7 +279,7 @@ const manageUsers = async (req, res) => {
 const manageQuestions = async (req, res) => {
     try {
         const { action, questionId, questionData } = req.body;
-        const { page = 1, limit = 20, search, materia, dificuldade, aprovada } = req.query;
+        const { page = 1, limit = 20, search, materia, dificuldade, aprovada, ativa } = req.query;
 
         // Verificar permissão de admin
         const adminUser = await User.findById(req.userId);
@@ -245,100 +290,165 @@ const manageQuestions = async (req, res) => {
             });
         }
 
-        // Construir filtros
-        const filters = {};
-        if (search) {
-            filters.$or = [
-                { titulo: { $regex: search, $options: 'i' } },
-                { codigo: { $regex: search, $options: 'i' } },
-                { enunciado: { $regex: search, $options: 'i' } }
-            ];
-        }
-        if (materia) filters.materia = materia;
-        if (dificuldade) filters.dificuldade = dificuldade;
-        if (aprovada !== undefined) filters.aprovada = aprovada === 'true';
-
         // Ações específicas
-        if (action) {
+        if (action && questionId) {
             switch (action) {
                 case 'approve':
-                    await Question.findByIdAndUpdate(questionId, { aprovada: true });
+                    const approvedQuestion = await database.update(collections.QUESTIONS, questionId, { 
+                        aprovada: true, 
+                        ativa: true 
+                    });
                     return res.json({
                         success: true,
-                        message: '✅ Questão aprovada com sucesso'
+                        message: '✅ Questão aprovada e ativada com sucesso',
+                        question: approvedQuestion
                     });
 
                 case 'reject':
-                    await Question.findByIdAndUpdate(questionId, { aprovada: false, ativa: false });
+                    const rejectedQuestion = await database.update(collections.QUESTIONS, questionId, { 
+                        aprovada: false, 
+                        ativa: false 
+                    });
                     return res.json({
                         success: true,
-                        message: '❌ Questão rejeitada'
+                        message: '❌ Questão rejeitada',
+                        question: rejectedQuestion
                     });
 
                 case 'activate':
-                    await Question.findByIdAndUpdate(questionId, { ativa: true });
+                    const activatedQuestion = await database.update(collections.QUESTIONS, questionId, { ativa: true });
                     return res.json({
                         success: true,
-                        message: '🔄 Questão ativada'
+                        message: '🔄 Questão ativada',
+                        question: activatedQuestion
                     });
 
                 case 'deactivate':
-                    await Question.findByIdAndUpdate(questionId, { ativa: false });
+                    const deactivatedQuestion = await database.update(collections.QUESTIONS, questionId, { ativa: false });
                     return res.json({
                         success: true,
-                        message: '⏸️ Questão desativada'
+                        message: '⏸️ Questão desativada',
+                        question: deactivatedQuestion
                     });
 
                 case 'update':
-                    await Question.findByIdAndUpdate(questionId, questionData);
+                    const updatedQuestion = await database.update(collections.QUESTIONS, questionId, questionData);
                     return res.json({
                         success: true,
-                        message: '✏️ Questão atualizada com sucesso'
+                        message: '✏️ Questão atualizada com sucesso',
+                        question: updatedQuestion
                     });
 
                 case 'delete':
-                    await Question.findByIdAndDelete(questionId);
-                    return res.json({
-                        success: true,
-                        message: '🗑️ Questão removida com sucesso'
+                    const deleted = await Question.delete(questionId);
+                    if (deleted) {
+                        return res.json({
+                            success: true,
+                            message: '🗑️ Questão removida com sucesso'
+                        });
+                    } else {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Erro ao remover questão'
+                        });
+                    }
+
+                default:
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Ação inválida',
+                        availableActions: ['approve', 'reject', 'activate', 'deactivate', 'update', 'delete']
                     });
             }
         }
 
-        // Listar questões com paginação
-        const questions = await Question.find(filters)
-            .sort({ criadoEm: -1 })
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .populate('criadaPor', 'nome email')
-            .select('codigo titulo materia dificuldade fonte aprovada ativa vezesRespondida percentualAcerto criadoEm criadaPor');
+        // Construir filtros
+        const filters = {};
+        if (materia) filters.materia = materia;
+        if (dificuldade) filters.dificuldade = dificuldade;
+        if (aprovada !== undefined) filters.aprovada = aprovada === 'true';
+        if (ativa !== undefined) filters.ativa = ativa === 'true';
 
-        const totalQuestions = await Question.countDocuments(filters);
+        // Buscar questões
+        let questions = [];
+        if (search) {
+            // Busca simples por título, código ou enunciado
+            const allQuestions = await Question.find(filters);
+            questions = allQuestions.filter(q => 
+                q.titulo.toLowerCase().includes(search.toLowerCase()) ||
+                q.codigo.toLowerCase().includes(search.toLowerCase()) ||
+                q.enunciado.toLowerCase().includes(search.toLowerCase())
+            );
+        } else {
+            const paginationResult = await Question.paginate(filters, {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                orderBy: { field: 'createdAt', direction: 'desc' }
+            });
+            questions = paginationResult.data;
+        }
+
+        // Buscar informações dos criadores
+        const questionsWithCreators = await Promise.all(
+            questions.map(async (question) => {
+                let criador = null;
+                if (question.criadaPor) {
+                    criador = await User.findById(question.criadaPor);
+                }
+
+                return {
+                    id: question.id,
+                    codigo: question.codigo,
+                    titulo: question.titulo,
+                    materia: question.materia,
+                    assunto: question.assunto,
+                    dificuldade: question.dificuldade,
+                    fonte: question.fonte ? 
+                        `${question.fonte.vestibular || 'N/A'} ${question.fonte.ano || ''}`.trim() : 'N/A',
+                    status: question.ativa ? 
+                        (question.aprovada ? 'Ativa' : 'Pendente') : 'Inativa',
+                    aprovada: question.aprovada,
+                    ativa: question.ativa,
+                    estatisticas: {
+                        vezesRespondida: question.vezesRespondida,
+                        vezesAcertada: question.vezesAcertada,
+                        percentualAcerto: question.percentualAcerto
+                    },
+                    autor: criador ? criador.nome : 'Sistema',
+                    autorEmail: criador ? criador.email : null,
+                    criadaEm: question.criadaEm || question.createdAt,
+                    tags: question.tags || []
+                };
+            })
+        );
+
+        const totalQuestions = search ? questions.length : await Question.count(filters);
 
         res.json({
             success: true,
-            questions: questions.map(q => ({
-                id: q._id,
-                codigo: q.codigo,
-                titulo: q.titulo,
-                materia: q.materia,
-                dificuldade: q.dificuldade,
-                fonte: q.fonte ? `${q.fonte.vestibular} ${q.fonte.ano}` : 'N/A',
-                status: q.ativa ? (q.aprovada ? 'Ativa' : 'Pendente') : 'Inativa',
-                aprovada: q.aprovada,
-                estatisticas: {
-                    vezesRespondida: q.vezesRespondida,
-                    percentualAcerto: q.percentualAcerto
-                },
-                autor: q.criadaPor ? q.criadaPor.nome : 'Sistema',
-                criadaEm: q.criadoEm
-            })),
+            message: `❓ ${questionsWithCreators.length} questões encontradas`,
+            questions: questionsWithCreators,
             pagination: {
                 currentPage: parseInt(page),
                 totalPages: Math.ceil(totalQuestions / limit),
                 totalQuestions,
                 hasNext: page * limit < totalQuestions,
-                hasPrevious: page > 1
+                hasPrevious: page > 1,
+                resultsPerPage: parseInt(limit)
+            },
+            filters: {
+                search: search || null,
+                materia: materia || 'Todas',
+                dificuldade: dificuldade || 'Todas',
+                aprovada: aprovada || 'Todas',
+                ativa: ativa || 'Todas'
+            },
+            statistics: {
+                totalActive: questionsWithCreators.filter(q => q.ativa).length,
+                totalApproved: questionsWithCreators.filter(q => q.aprovada).length,
+                totalPending: questionsWithCreators.filter(q => !q.aprovada).length,
+                averageAccuracy: questionsWithCreators.length > 0 ? 
+                    Math.round(questionsWithCreators.reduce((sum, q) => sum + (q.estatisticas.percentualAcerto || 0), 0) / questionsWithCreators.length) : 0
             }
         });
 
@@ -377,169 +487,11 @@ const createQuestion = async (req, res) => {
             });
         }
 
-        // Gerar código único
-        const codigoBase = materia.substring(0, 3).toUpperCase();
-        const ultimoCodigo = await Question.findOne({
-            codigo: { $regex: `^${codigoBase}` }
-        }).sort({ codigo: -1 });
-
-        let numeroCodigo = 1;
-        if (ultimoCodigo) {
-            const numero = parseInt(ultimoCodigo.codigo.replace(codigoBase, ''));
-            numeroCodigo = numero + 1;
-        }
-
-        const codigo = `${codigoBase}${numeroCodigo.toString().padStart(4, '0')}`;
-
-        // Criar questão
-        const novaQuestao = new Question({
-            codigo,
-            titulo,
-            enunciado,
-            alternativas,
-            respostaCorreta,
-            materia,
-            assunto,
-            dificuldade,
-            fonte,
-            explicacao,
-            tags: tags || [],
-            criadaPor: req.userId,
-            aprovada: adminUser.tipo === 'admin', // Admin aprova automaticamente
-            ativa: adminUser.tipo === 'admin'
-        });
-
-        await novaQuestao.save();
-
-        res.status(201).json({
-            success: true,
-            message: '🎯 Questão criada com sucesso!',
-            question: {
-                id: novaQuestao._id,
-                codigo: novaQuestao.codigo,
-                titulo: novaQuestao.titulo,
-                materia: novaQuestao.materia,
-                dificuldade: novaQuestao.dificuldade,
-                status: novaQuestao.aprovada ? 'Aprovada' : 'Pendente aprovação'
-            }
-        });
-
-    } catch (error) {
-        console.error('Erro ao criar questão:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erro interno do servidor',
-            error: error.message
-        });
-    }
-};
-
-// 5. RELATÓRIOS E ESTATÍSTICAS AVANÇADAS
-const getAdvancedReports = async (req, res) => {
-    try {
-        const { type, startDate, endDate } = req.query;
-
-        // Verificar permissão de admin
-        const adminUser = await User.findById(req.userId);
-        if (!adminUser || adminUser.tipo !== 'admin') {
-            return res.status(403).json({
+        // Validar dados obrigatórios
+        const requiredFields = ['titulo', 'enunciado', 'alternativas', 'respostaCorreta', 'materia', 'assunto', 'dificuldade'];
+        const missingFields = requiredFields.filter(field => !req.body[field]);
+        
+        if (missingFields.length > 0) {
+            return res.status(400).json({
                 success: false,
-                message: 'Acesso negado - Apenas administradores'
-            });
-        }
-
-        // Filtros de data
-        const dateFilter = {};
-        if (startDate) dateFilter.$gte = new Date(startDate);
-        if (endDate) dateFilter.$lte = new Date(endDate);
-
-        let report = {};
-
-        switch (type) {
-            case 'users':
-                // Relatório de usuários
-                const userStats = await User.aggregate([
-                    { $match: dateFilter.criadoEm ? { criadoEm: dateFilter } : {} },
-                    {
-                        $group: {
-                            _id: null,
-                            totalUsers: { $sum: 1 },
-                            activeUsers: { $sum: { $cond: ['$ativo', 1, 0] } },
-                            avgScore: { $avg: '$pontuacaoTotal' },
-                            totalExams: { $sum: '$simuladosRealizados' }
-                        }
-                    }
-                ]);
-
-                const usersByState = await User.aggregate([
-                    { $match: { ativo: true } },
-                    { $group: { _id: '$estado', count: { $sum: 1 } } },
-                    { $sort: { count: -1 } }
-                ]);
-
-                report = {
-                    type: 'Relatório de Usuários',
-                    period: { startDate, endDate },
-                    stats: userStats[0] || {},
-                    distribution: usersByState
-                };
-                break;
-
-            case 'questions':
-                // Relatório de questões
-                const questionStats = await Question.aggregate([
-                    { $match: dateFilter.criadoEm ? { criadoEm: dateFilter } : {} },
-                    {
-                        $group: {
-                            _id: null,
-                            totalQuestions: { $sum: 1 },
-                            activeQuestions: { $sum: { $cond: ['$ativa', 1, 0] } },
-                            approvedQuestions: { $sum: { $cond: ['$aprovada', 1, 0] } },
-                            avgAccuracy: { $avg: '$percentualAcerto' },
-                            totalAnswered: { $sum: '$vezesRespondida' }
-                        }
-                    }
-                ]);
-
-                const questionsBySubject = await Question.aggregate([
-                    { $match: { ativa: true } },
-                    { $group: { _id: '$materia', count: { $sum: 1 }, avgAccuracy: { $avg: '$percentualAcerto' } } },
-                    { $sort: { count: -1 } }
-                ]);
-
-                report = {
-                    type: 'Relatório de Questões',
-                    period: { startDate, endDate },
-                    stats: questionStats[0] || {},
-                    distribution: questionsBySubject
-                };
-                break;
-
-            case 'performance':
-                // Relatório de performance da plataforma
-                const performanceData = await User.aggregate([
-                    {
-                        $group: {
-                            _id: '$serie',
-                            count: { $sum: 1 },
-                            avgScore: { $avg: '$pontuacaoTotal' },
-                            avgExams: { $avg: '$simuladosRealizados' }
-                        }
-                    },
-                    { $sort: { avgScore: -1 } }
-                ]);
-
-                report = {
-                    type: 'Relatório de Performance',
-                    period: { startDate, endDate },
-                    performanceByGrade: performanceData,
-                    summary: {
-                        message: 'Análise de performance por série escolar',
-                        insights: [
-                            'Identifica as séries com melhor desempenho',
-                            'Mostra engajamento por nível educacional',
-                            'Ajuda a personalizar conteúdo por série'
-                        ]
-                    }
-                };
-                br
+                message: 'Campos obrigatórios aus
