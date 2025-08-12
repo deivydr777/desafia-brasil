@@ -59,23 +59,9 @@ app.use((err, req, res, next) => {
 });
 
 // Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log('🚀 ================================');
-    console.log('   DESAFIA BRASIL - BACKEND');
-    console.log('🚀 ================================');
-    console.log(`📚 API Educacional COMPLETA!`);
-    console.log(`🌐 Porta: ${PORT}`);
+ const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 DESAFIA BRASIL - BACKEND 🚀`);
+    console.log(`📚 API FUNCIONANDO na porta ${PORT}! 📚`);
     console.log(`🔗 URL: http://localhost:${PORT}`);
-    console.log(`📱 Termux: http://127.0.0.1:${PORT}`);
-    console.log('✅ Endpoints disponíveis:');
-    console.log('   📖 Documentação: /api/docs');
-    console.log('   ❤️  Health Check: /api/health');
-    console.log('   🔐 Autenticação: /api/auth/*');
-    console.log('   📚 Simulados: /api/exams/*');
-    console.log('   🏆 Ranking: /api/ranking');
-    console.log('   👑 Admin: /api/admin/*');
-    console.log('🚀 ================================');
-    console.log('🎓 PLATAFORMA EDUCACIONAL PRONTA!');
-    console.log('🚀 ================================');
 });
